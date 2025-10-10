@@ -1,17 +1,22 @@
+"""
+Simulation Loading capabilities. It loads the simulations from either an XML or a CSV export
+"""
 import abc
 import re
-
-import pandas as pd
+import logging
 from typing import List
 from xml.etree.ElementTree import Element
-import logging
+import xml.etree.ElementTree as ET
+import pandas as pd
 
 from .simulation import Simulation
 from .simulation_data import FlightEvent
 
+
 def load_simulations_from_xml(file_path: str) -> List[Simulation]:
-    """Loads all simulations from an OpenRocket XML file."""
-    import xml.etree.ElementTree as ET
+    """
+    Loads all simulations from an OpenRocket XML file.
+    """
 
     try:
         tree = ET.parse(file_path)
@@ -29,16 +34,21 @@ def load_simulations_from_xml(file_path: str) -> List[Simulation]:
 
 
 class BaseSimulationLoader(abc.ABC):
-    """Abstract base class for all simulation loaders."""
+    """
+    Abstract base class for all simulation loaders.
+    """
 
     @abc.abstractmethod
     def load(self) -> List[Simulation]:
-        """Loads simulation data and returns a list of Simulation objects."""
-        pass
+        """
+        Loads simulation data and returns a list of Simulation objects.
+        """
 
 
 class CsvSimulationLoader(BaseSimulationLoader):
-    """Loads a simulation from an exported CSV file."""
+    """
+    Loads a simulation from an exported CSV file.
+    """
 
     def __init__(self, file_path: str):
         self.file_path = file_path
@@ -71,8 +81,10 @@ class CsvSimulationLoader(BaseSimulationLoader):
 def _clean_header(header_text: str) -> str:
     """Converts a header like 'Vertical velocity (m/s²)' to 'vertical_velocity_ms2'."""
     text = header_text.lower().strip()
-    text = re.sub(r'[\s\(\)]+', '_', text)  # Replace spaces and parentheses with underscores
-    text = re.sub(r'[^a-z0-9_]', '', text)  # Remove invalid characters
+    # Replace spaces and parentheses with underscores
+    text = re.sub(r'[\s\(\)]+', '_', text)
+    # Remove invalid characters
+    text = re.sub(r'[^a-z0-9_]', '', text)
     text = text.strip('_')
     return text
 

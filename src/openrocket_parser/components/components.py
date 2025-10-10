@@ -1,3 +1,7 @@
+"""
+Components collects a
+"""
+
 import logging
 from typing import Type, List
 from xml.etree.ElementTree import Element
@@ -77,32 +81,38 @@ class XMLComponent:
         return self.element.findall(path)
 
     @staticmethod
-    def _get_float(value_str: str) -> float:
+    def get_float(value_str: str) -> float:
         """Robustly converts a string to a float, handling 'auto' values."""
-        if value_str is None: return 0.0
+        if value_str is None:
+            return 0.0
         clean_str = value_str.strip().lower()
         # Handle the auto values so they don't break the entire conversion
         if clean_str.startswith('auto'):
             clean_str = clean_str.replace('auto', '').strip()
-            if not clean_str: return 0.0
+            if not clean_str:
+                return 0.0
         return float(clean_str)
 
     @staticmethod
-    def _get_bool(value_str: str) -> bool:
+    def get_bool(value_str: str) -> bool:
         """Converts a string to a boolean."""
-        if value_str is None: return False
+        if value_str is None:
+            return False
         return value_str.strip().lower() in ['true', 'yes', '1']
 
 @register_component('subcomponent')
 class Subcomponent(XMLComponent):
+    """"
+    Subcomponents enables shared functionality for all components - such as length, radius, material, etc
+    """
     _FIELDS = [
-        ('length', './/length', XMLComponent._get_float, 0.0),
-        ('radius', './/radius', XMLComponent._get_float, 0.0),
-        ('position', './/position', XMLComponent._get_float, 0.0),
+        ('length', './/length', XMLComponent.get_float, 0.0),
+        ('radius', './/radius', XMLComponent.get_float, 0.0),
+        ('position', './/position', XMLComponent.get_float, 0.0),
         ('material', './/material', str, 'Unknown'),
-        ('thickness', './/thickness', XMLComponent._get_float, 0.0),
-        ('outerradius', './/outerradius', XMLComponent._get_float, 0.0),
-        ('innerradius', './/innerradius', XMLComponent._get_float, 0.0),
+        ('thickness', './/thickness', XMLComponent.get_float, 0.0),
+        ('outerradius', './/outerradius', XMLComponent.get_float, 0.0),
+        ('innerradius', './/innerradius', XMLComponent.get_float, 0.0),
     ]
 
     def __init__(self, element: Element):

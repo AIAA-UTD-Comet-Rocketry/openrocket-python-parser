@@ -1,3 +1,7 @@
+"""
+Stage Component related functionality
+"""
+
 from typing import List
 from xml.etree.ElementTree import Element
 
@@ -6,6 +10,9 @@ from openrocket_parser.components.components import register_component, XMLCompo
 
 @register_component('stage')
 class Stage(XMLComponent):
+    """
+    Stage component, created after the stage components in the xml
+    """
     def __init__(self, element: Element):
         super().__init__(element)
         self.subcomponents: List[XMLComponent] = [
