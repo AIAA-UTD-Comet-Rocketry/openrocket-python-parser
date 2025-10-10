@@ -1,6 +1,6 @@
 from xml.etree.ElementTree import Element
 
-from src.openrocket_parser.components import register_component, XMLComponent, component_factory
+from openrocket_parser.components.components import register_component, XMLComponent, component_factory
 
 
 @register_component('motor')

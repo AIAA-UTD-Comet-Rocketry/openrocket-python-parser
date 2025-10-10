@@ -15,10 +15,9 @@ pip install git+[https://github.com/YOUR_USERNAME/YOUR_REPOSITORY_NAME.git](http
 Here's how to load simulation data from an OpenRocket file:
 
 ```python
-from openrocket_parser.loaders import load_simulations_from_xml
+from src.openrocket_parser.simulations.loader import load_simulations_from_xml
 
-# Load all simulations from the file
-sims = load_simulations_from_xml('my_rocket.ork')
+sims = load_simulations_from_xml('sample.ork')
 
 if sims:
     # Get the first simulation
@@ -29,9 +28,9 @@ if sims:
 
     # The flight data is a pandas DataFrame
     flight_df = my_sim.flight_data
-    
+
     # Print the max altitude from the time-series data
-    max_altitude_from_data = flight_df['altitude_m'].max()
+    max_altitude_from_data = flight_df['altitude'].max()
     print(f"Max altitude from data: {max_altitude_from_data:.2f} meters")
 ```
 
