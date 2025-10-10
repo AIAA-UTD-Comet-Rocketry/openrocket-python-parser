@@ -34,3 +34,33 @@ if sims:
     max_altitude_from_data = flight_df['altitude_m'].max()
     print(f"Max altitude from data: {max_altitude_from_data:.2f} meters")
 ```
+
+# Tools
+## Visualizer
+
+The visualizer tools allows to visualize the simulation data in real-time, directly from the simulation results in OpenRocket
+
+![OpenRocketTool.gif](docs/OpenRocketTool.gif)
+
+### Basic Usage
+```shell
+usage: flight_visualizer.py [-h] [--sim SIM] [--speed SPEED] [--no-repeat] file
+
+Animate OpenRocket flight simulation data tool.
+
+positional arguments:
+  file           Path to the OpenRocket (.ork) file.
+
+options:
+  -h, --help     show this help message and exit
+  --sim SIM      The simulation number to visualize (1-based index). Default is 1.
+  --speed SPEED  Playback speed multiplier (e.g., 2 for 2x speed, 0.5 for half speed). Default is 1.0.
+  --no-repeat    Disable the animation from repeating when it finishes.
+```
+
+For convenience, a sample open rocket with basic information can be found in tests/sample.ork
+
+```shell
+# This runs the sample.ork simulation data at twice the speed, without repeating
+python tools/flight_visualizer.py tests/sample.ork --speed 2 --no-repeat
+```

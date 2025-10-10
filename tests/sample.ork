@@ -5,7 +5,7 @@
     <id>4fd9aaac-24dc-4272-9dcd-40acfe19bb80</id>
     <axialoffset method="absolute">0.0</axialoffset>
     <position type="absolute">0.0</position>
-    <designer>Jazy, Haashim, Fred, Sajjad</designer>
+    <designer>OpenRocketParser Tool</designer>
     <revision>Changed motor delay time to bring simulations within parameters, change name of the rocket to V3</revision>
     <motorconfiguration configid="111f6bee-93fe-476f-bde6-aeadaa1fc5ac">
       <stage number="0" active="true"/>
