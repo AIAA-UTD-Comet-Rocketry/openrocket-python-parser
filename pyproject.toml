@@ -24,6 +24,9 @@ dependencies = [
     "pandas>=1.5.0",
 ]
 
+[project.optional-dependencies]
+visualizer = ["matplotlib"]
+
 [project.urls]
 "Homepage" = "https://github.com/YOUR_USERNAME/YOUR_REPOSITORY_NAME"
 "Bug Tracker" = "https://github.com/YOUR_USERNAME/YOUR_REPOSITORY_NAME/issues"

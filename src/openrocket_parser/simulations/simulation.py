@@ -3,7 +3,7 @@ from typing import Dict, Any, List
 
 import pandas as pd
 
-from src.openrocket_parser.simulations.simulation_data import FlightEvent
+from openrocket_parser.simulations.simulation_data import FlightEvent
 
 
 @dataclass

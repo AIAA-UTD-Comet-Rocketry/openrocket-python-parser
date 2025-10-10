@@ -1,10 +1,7 @@
-from typing import Optional, List
+import logging
+from typing import Optional
 
-from src.openrocket_parser.components.rocket import Rocket
-
-from src.openrocket_parser import logging
-from src.openrocket_parser.simulations.loader import XmlSimulationLoader
-from src.openrocket_parser.simulations.simulation import Simulation
+from openrocket_parser.components.rocket import Rocket
 
 
 def load_rocket_from_xml(file_path: str) -> Rocket:
