@@ -1,4 +1,8 @@
-from dataclasses import dataclass, field
+"""
+Simulation Data depends on a list of events from OpenRocket.
+The timed events are used within the library as pandas dataframes
+"""
+from dataclasses import dataclass
 
 
 @dataclass

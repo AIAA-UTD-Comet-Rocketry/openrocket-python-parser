@@ -1,3 +1,6 @@
+"""
+A Tool designed to visualize the simulation results from OpenRocket
+"""
 import argparse
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
@@ -64,11 +67,27 @@ def visualize_flight(sim_data, speed_multiplier=1.0, repeat=True):
     acc_line, = ax_acc.plot([], [], 'c-')
 
     # Add a text annotation for live data
-    live_text = ax_traj.text(0.05, 0.95, '', transform=ax_traj.transAxes, verticalalignment='top')
+    live_text = ax_traj.text(
+        0.05, 0.95, '',
+        transform=ax_traj.transAxes,
+        verticalalignment='top'
+    )
 
-    alt_max_text = ax_alt.text(0.98, 0.95, '', transform=ax_alt.transAxes, ha='right', va='top', color='g')
-    vel_max_text = ax_vel.text(0.98, 0.95, '', transform=ax_vel.transAxes, ha='right', va='top', color='m')
-    acc_max_text = ax_acc.text(0.98, 0.95, '', transform=ax_acc.transAxes, ha='right', va='top', color='c')
+    alt_max_text = ax_alt.text(
+        0.98, 0.95, '',
+        transform=ax_alt.transAxes,
+        ha='right', va='top', color='g'
+    )
+    vel_max_text = ax_vel.text(
+        0.98, 0.95, '',
+        transform=ax_vel.transAxes,
+        ha='right', va='top', color='m'
+    )
+    acc_max_text = ax_acc.text(
+        0.98, 0.95, '',
+        transform=ax_acc.transAxes,
+        ha='right', va='top', color='c'
+    )
 
     # --- 3. DEFINE ANIMATION LOGIC ---
     # The time step in the data (e.g., 0.01s)
@@ -76,8 +95,13 @@ def visualize_flight(sim_data, speed_multiplier=1.0, repeat=True):
     # How many data points to jump per animation frame
     frame_step = int(speed_multiplier) if speed_multiplier >= 1 else 1
     # Delay between animation frames in milliseconds
-    frame_interval = (data_time_step / speed_multiplier) * 1000 * frame_step if speed_multiplier > 0 else 0
-    if frame_interval < 1: frame_interval = 1  # Matplotlib requires a positive interval
+    if speed_multiplier > 0:
+        frame_interval = max(
+            (data_time_step / speed_multiplier) * 1000 * frame_step,
+            1  # If the interval is less than 1, force it to one as pandas needs positive intervals
+        )
+    else:
+        frame_interval = 0
 
     def init():
         """Initializes the plot for the animation."""
@@ -89,10 +113,16 @@ def visualize_flight(sim_data, speed_multiplier=1.0, repeat=True):
         ax_alt.set_ylim(df['altitude'].min(), df['altitude'].max() * 1.1)
 
         ax_vel.set_xlim(0, df['time'].max())
-        ax_vel.set_ylim(df['vertical_velocity'].min() * 1.1, df['vertical_velocity'].max() * 1.1)
+        ax_vel.set_ylim(
+            df['vertical_velocity'].min() * 1.1,
+            df['vertical_velocity'].max() * 1.1
+        )
 
         ax_acc.set_xlim(0, df['time'].max())
-        ax_acc.set_ylim(df['vertical_acceleration'].min() * 1.1, df['vertical_acceleration'].max() * 1.1)
+        ax_acc.set_ylim(
+            df['vertical_acceleration'].min() * 1.1,
+            df['vertical_acceleration'].max() * 1.1
+        )
 
         # Reset all lines and text
         traj_line.set_data([], [])
@@ -117,7 +147,10 @@ def visualize_flight(sim_data, speed_multiplier=1.0, repeat=True):
 
         # Update trajectory plot
         traj_line.set_data(data_slice['lateral_distance'], data_slice['altitude'])
-        plot_data = [[df['lateral_distance'].iloc[current_index]], [df['altitude'].iloc[current_index]]]
+        plot_data = [
+            [df['lateral_distance'].iloc[current_index]],
+            [df['altitude'].iloc[current_index]]
+        ]
         rocket_marker.set_data(plot_data)
 
         # Update time series plots
@@ -148,8 +181,8 @@ def visualize_flight(sim_data, speed_multiplier=1.0, repeat=True):
             max_values["acc"] = current_acc
             acc_max_text.set_text(f'Max: {max_values["acc"]:.1f} m/s²')
 
-        # Technically this is mandatory according to matplot lib to keep animations from being collected
-        # by the python GC
+        # Technically this is mandatory according to matplot
+        # lib to keep animations from being collected by the python GC
         return (traj_line, rocket_marker, alt_line, vel_line, acc_line, live_text,
                 alt_max_text, vel_max_text, acc_max_text)
 
@@ -185,7 +218,8 @@ def main():
         "--speed",
         type=float,
         default=1.0,
-        help="Playback speed multiplier (e.g., 2 for 2x speed, 0.5 for half speed). Default is 1.0.",
+        help="Playback speed multiplier (e.g., 2 for 2x speed, 0.5 for half speed)"
+             ". Default is 1.0.",
     )
 
     parser.add_argument(
