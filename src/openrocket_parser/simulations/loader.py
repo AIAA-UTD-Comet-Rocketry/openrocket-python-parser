@@ -27,28 +27,6 @@ def load_simulations_from_xml(file_path: str) -> List[Simulation]:
         logging.error(f"Could not load or parse XML file at {file_path}: {e}")
         return []
 
-# --- Example Usage ---
-# sims = load_simulations_from_xml('my_rocket.ork')
-# if sims:
-#     my_first_sim = sims[0]
-#     print(f"Loaded simulation: {my_first_sim.name}")
-#     print(f"Time to Apogee: {my_first_sim.summary.get('timetoapogee')} seconds")
-#     print(f"Max Altitude: {my_first_sim.summary.get('maxaltitude')} meters")
-#
-#     # Now you can easily work with the data using pandas
-#     flight_df = my_first_sim.flight_data
-#     print("\nFirst 5 data points:")
-#     print(flight_df.head())
-#
-#     # Example: Plot altitude vs. time using matplotlib
-#     # import matplotlib.pyplot as plt
-#     # plt.plot(flight_df['time'], flight_df['altitude_m'])
-#     # plt.xlabel("Time (s)")
-#     # plt.ylabel("Altitude (m)")
-#     # plt.title(f"Altitude for {my_first_sim.name}")
-#     # plt.grid(True)
-#     # plt.show()
-
 
 class BaseSimulationLoader(abc.ABC):
     """Abstract base class for all simulation loaders."""
@@ -70,8 +48,6 @@ class CsvSimulationLoader(BaseSimulationLoader):
             # Using pandas to easily read and process the data
             flight_data = pd.read_csv(self.file_path, comment='#')
 
-            # Map CSV column names to our TimeStep attributes
-            # You must adjust these names to match your CSV file exactly!
             column_map = {
                 'Time (s)': 'time',
                 'Altitude (m)': 'altitude',
@@ -88,8 +64,7 @@ class CsvSimulationLoader(BaseSimulationLoader):
             )
             return [sim]  # Return as a list for consistency
         except FileNotFoundError:
-            # In a real app, use logging.error()
-            print(f"Error: CSV file not found at {self.file_path}")
+            logging.error(f"Error: CSV file not found at {self.file_path}")
             return []
 
 

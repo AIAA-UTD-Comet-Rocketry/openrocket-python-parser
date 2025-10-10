@@ -1,4 +1,4 @@
-from src.openrocket_parser.components import register_component, Subcomponent, XMLComponent
+from openrocket_parser.components.components import register_component, Subcomponent, XMLComponent
 
 
 @register_component('finset')
@@ -8,5 +8,5 @@ class FinSet(Subcomponent):
         ('rootchord', './/rootchord', XMLComponent._get_float, 0.0),
         ('tipchord', './/tipchord', XMLComponent._get_float, 0.0),
         ('height', './/height', XMLComponent._get_float, 0.0),
-        # ... etc.
+        # @TODO add the rest
     ]

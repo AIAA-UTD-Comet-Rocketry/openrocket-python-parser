@@ -60,8 +60,6 @@ class XMLComponent:
     def _parse_and_set_attr(self, attr_name, path, converter, default):
         """Finds text in XML, converts it, and sets it as an attribute."""
         raw_value = self.element.findtext(path)
-
-        value = None
         if raw_value is not None:
             try:
                 value = converter(raw_value)

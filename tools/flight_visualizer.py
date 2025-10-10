@@ -148,8 +148,8 @@ def visualize_flight(sim_data, speed_multiplier=1.0, repeat=True):
             max_values["acc"] = current_acc
             acc_max_text.set_text(f'Max: {max_values["acc"]:.1f} m/s²')
 
-        # Technically this is mandatory according to matplot lib and animations to keep
-        # the garbage collector from collecting the animation
+        # Technically this is mandatory according to matplot lib to keep animations from being collected
+        # by the python GC
         return (traj_line, rocket_marker, alt_line, vel_line, acc_line, live_text,
                 alt_max_text, vel_max_text, acc_max_text)
 
