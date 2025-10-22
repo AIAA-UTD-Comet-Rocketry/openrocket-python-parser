@@ -4,10 +4,28 @@ A Python library to parse OpenRocket (.ork) XML files and simulation data into c
 
 ## Installation
 
-You can install this library directly from GitHub using pip:
+Temporarily (until the library is available as a pip module), the installation process is a bit more involved.
 
 ```bash
-pip install git+[https://github.com/YOUR_USERNAME/YOUR_REPOSITORY_NAME.git](https://github.com/YOUR_USERNAME/YOUR_REPOSITORY_NAME.git)
+# 1. Clone the repo
+git clone https://github.com/AIAA-UTD-Comet-Rocketry/openrocket-python-parser
+
+# 2. Create a virtual environment
+cd openrocket-python-parser
+python -m venv .venv
+
+# 3. Activate the environment
+# macOS / Linux
+source .venv/bin/activate
+
+# Windows
+.venv\Scripts\activate.bat
+
+# 4. Set the library as editable, `.` is the root folder of the cloned repo
+pip install -e .
+
+# 5. Install additional dependencies
+pip install -r requirements.txt
 ```
 
 ## Basic Usage
