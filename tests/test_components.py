@@ -1,7 +1,7 @@
 """
 Basic testing for loading functionality to prevent the tool from breaking unintentionally
 """
-from src.openrocket_parser.simulations.loader import load_simulations_from_xml
+from openrocket_parser.simulations.loader import load_simulations_from_xml
 
 sims = load_simulations_from_xml('sample.ork')
 
