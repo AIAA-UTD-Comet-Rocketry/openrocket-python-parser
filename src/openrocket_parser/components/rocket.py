@@ -15,7 +15,8 @@ class Rocket(XMLComponent):
     Supports multi-stage setups
     """
     _FIELDS = [
-        ("designer", ".//designer", str, "Unknown")
+        ("designer", ".//designer", str, "Unknown"),
+        ("name", ".//name", str, "Unknown")
     ]
 
     def __init__(self, element: Element):

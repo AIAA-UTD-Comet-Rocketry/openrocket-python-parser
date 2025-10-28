@@ -21,14 +21,14 @@ def load_rocket_from_xml(file_path: str) -> Rocket:
         raise ValueError(error)
     return rocket
 
-def load_rocket_from_xml_safe(file_path: str, root: str = 'rocket') -> Optional[Rocket]:
+def load_rocket_from_xml_safe(file_path: str, root_ele: str = 'rocket') -> Optional[Rocket]:
     """Loads an entire rocket definition from an OpenRocket XML file, catching errors if they happen """
 
     try:
         tree = ET.parse(file_path)
         root = tree.getroot()
         # The main rocket element is usually <openrocket> or <rocket>, but it can be customized if needed.
-        rocket_element = root.find(f'.//{root}')
+        rocket_element = root.find(f'.//{root_ele}')
         if rocket_element is None:
             raise ValueError("Could not find a <rocket> element in the XML file.")
 

@@ -33,3 +33,6 @@ visualizer = ["matplotlib"]
 [project.urls]
 "Homepage" = "https://github.com/AIAA-UTD-Comet-Rocketry/openrocket-python-parser"
 "Bug Tracker" = "https://github.com/AIAA-UTD-Comet-Rocketry/openrocket-python-parser/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]

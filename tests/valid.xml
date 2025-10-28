@@ -1,0 +1,8 @@
+<openrocket version="1.0">
+    <rocket>
+        <name>My Test Rocket</name>
+        <subcomponents>
+            <stage/>
+        </subcomponents>
+    </rocket>
+</openrocket>

@@ -2,9 +2,23 @@
 
 A Python library to parse OpenRocket (.ork) XML files and simulation data into convenient Python objects and pandas DataFrames.
 
-## Installation
+## Installing for usage
+You can install this library with pip:
+```bash
+# Latest version
+pip install git+https://github.com/AIAA-UTD-Comet-Rocketry/openrocket-python-parser
 
-Temporarily (until the library is available as a pip module), the installation process is a bit more involved.
+# Specific branch
+pip install git+https://github.com/AIAA-UTD-Comet-Rocketry/openrocket-python-parser.git@branch-name
+
+# Specific Tag
+pip install git+https://github.com/AIAA-UTD-Comet-Rocketry/openrocket-python-parser.git@vMAJOR.MINOR.PATCH
+
+# Installing from mypy
+pip install openrocket-python-parser
+```
+
+## Contributing
 
 ```bash
 # 1. Clone the repo
@@ -33,7 +47,7 @@ pip install -r requirements.txt
 Here's how to load simulation data from an OpenRocket file:
 
 ```python
-from src.openrocket_parser.simulations.loader import load_simulations_from_xml
+from openrocket_parser.simulations.loader import load_simulations_from_xml
 
 sims = load_simulations_from_xml('sample.ork')
 
