@@ -5,11 +5,15 @@
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
+[tools.setuptools]
+license-expression="MIT"
+license-files = []
+
 # Project specific configuration
 [project]
 name = "openrocket-python-parser"
 # Update accordingly when a release is tagged as version.
-version = "0.2.0"
+version = "0.2.1"
 authors = [
   { name="AIAA UTD Comet Rocketry, Payload", email="fenrriquez@gmail.com" },
 ]
@@ -18,9 +22,11 @@ readme = "README.md"
 requires-python = ">=3.8"
 classifiers = [
     "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
-    "Topic :: Scientific/Engineering/Rocketry",
+    "Topic :: Scientific/Engineering",
+    "Development Status :: 3 - Alpha",
+    "Topic :: Scientific/Engineering :: Visualization",
+    "Topic :: Software Development :: Libraries :: Python Modules"
 ]
 # This is crucial! It tells pip what other libraries yours needs to run.
 dependencies = [
@@ -33,6 +39,9 @@ visualizer = ["matplotlib"]
 [project.urls]
 "Homepage" = "https://github.com/AIAA-UTD-Comet-Rocketry/openrocket-python-parser"
 "Bug Tracker" = "https://github.com/AIAA-UTD-Comet-Rocketry/openrocket-python-parser/issues"
+
+[project.scripts]
+openrocket-visualizer = "openrocket_parser.tools.flight_visualizer:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

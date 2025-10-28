@@ -5,6 +5,9 @@ A Python library to parse OpenRocket (.ork) XML files and simulation data into c
 ## Installing for usage
 You can install this library with pip:
 ```bash
+# Installing from pypi
+pip install openrocket-python-parser
+
 # Latest version
 pip install git+https://github.com/AIAA-UTD-Comet-Rocketry/openrocket-python-parser
 
@@ -13,9 +16,6 @@ pip install git+https://github.com/AIAA-UTD-Comet-Rocketry/openrocket-python-par
 
 # Specific Tag
 pip install git+https://github.com/AIAA-UTD-Comet-Rocketry/openrocket-python-parser.git@vMAJOR.MINOR.PATCH
-
-# Installing from mypy
-pip install openrocket-python-parser
 ```
 
 ## Contributing
@@ -75,7 +75,7 @@ The visualizer tools allows to visualize the simulation data in real-time, direc
 
 ### Basic Usage
 ```shell
-usage: flight_visualizer.py [-h] [--sim SIM] [--speed SPEED] [--no-repeat] file
+usage: openrocket-visualizer [-h] [--sim SIM] [--speed SPEED] [--no-repeat] file
 
 Animate OpenRocket flight simulation data tool.
 
@@ -93,5 +93,7 @@ For convenience, a sample open rocket with basic information can be found in tes
 
 ```shell
 # This runs the sample.ork simulation data at twice the speed, without repeating
-python tools/flight_visualizer.py tests/sample.ork --speed 2 --no-repeat
+# This requires the visualizer tool to be installed
+
+openrocket-visualizer tests/sample.ork --speed 2 --no-repeat
 ```
