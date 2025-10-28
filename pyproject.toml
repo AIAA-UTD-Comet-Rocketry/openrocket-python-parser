@@ -1,32 +1,35 @@
 # pyproject.toml
 
+# Standard pyproject boilerplate
 [build-system]
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
+# Project specific configuration
 [project]
-name = "openrocket-parser"
-version = "0.1.0"
+name = "openrocket-python-parser"
+# Update accordingly when a release is tagged as version.
+version = "0.2.0"
 authors = [
-  { name="AIAA UTD", email="your.email@example.com" },
+  { name="AIAA UTD Comet Rocketry, Payload", email="fenrriquez@gmail.com" },
 ]
-description = "A Python library to parse OpenRocket (.ork) XML files and simulation data."
+description = "A Python library to parse OpenRocket (.ork) XML files, including simulation data."
 readme = "README.md"
 requires-python = ">=3.8"
 classifiers = [
     "Programming Language :: Python :: 3",
-#    "License :: OSI Approved :: MIT License",
+    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
-    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering/Rocketry",
 ]
 # This is crucial! It tells pip what other libraries yours needs to run.
 dependencies = [
-    "pandas>=1.5.0",
+    "pandas>=1.5.0"
 ]
 
 [project.optional-dependencies]
 visualizer = ["matplotlib"]
 
 [project.urls]
-"Homepage" = "https://github.com/YOUR_USERNAME/YOUR_REPOSITORY_NAME"
-"Bug Tracker" = "https://github.com/YOUR_USERNAME/YOUR_REPOSITORY_NAME/issues"
+"Homepage" = "https://github.com/AIAA-UTD-Comet-Rocketry/openrocket-python-parser"
+"Bug Tracker" = "https://github.com/AIAA-UTD-Comet-Rocketry/openrocket-python-parser/issues"
