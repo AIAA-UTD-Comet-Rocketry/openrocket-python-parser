@@ -120,3 +120,169 @@ class Subcomponent(XMLComponent):
         self.subcomponents: List[XMLComponent] = [
             component_factory(e) for e in self.findall('.//subcomponents/*')
         ]
+
+@register_component('bulkhead')
+class Bulkhead(Subcomponent):
+    _FIELDS = [
+        ('instancecount', './/instancecount', int, 1),
+        ('instanceseparation', './/instanceseparation', XMLComponent.get_float, 0.0),
+        ('axialoffset', './/axialoffset', XMLComponent.get_float, 0.0),
+        ('position', './/position', XMLComponent.get_float, 0.0),
+        ('overridemass', './/overridemass', XMLComponent.get_float, 0.0),
+        ('overridesubcomponentsmass', './/overridesubcomponentsmass', XMLComponent.get_bool, False),
+        ('material', './/material', str, 'Unknown'),
+        ('length', './/length', XMLComponent.get_float, 0.0),
+        ('radialposition', './/radialposition', XMLComponent.get_float, 0.0),
+        ('radialdirection', './/radialdirection', XMLComponent.get_float, 0.0),
+        ('outerradius', './/outerradius', XMLComponent.get_float, 0.0),
+    ]
+
+@register_component('shockcord')
+class ShockCord(Subcomponent):
+    _FIELDS = [
+        ('axialoffset', './/axialoffset', XMLComponent.get_float, 0.0),
+        ('position', './/position', XMLComponent.get_float, 0.0),
+        ('overridemass', './/overridemass', XMLComponent.get_float, 0.0),
+        ('overridesubcomponentsmass', './/overridesubcomponentsmass', XMLComponent.get_bool, False),
+        ('packedlength', './/packedlength', XMLComponent.get_float, 0.0),
+        ('packedradius', './/packedradius', XMLComponent.get_float, 0.0),
+        ('radialposition', './/radialposition', XMLComponent.get_float, 0.0),
+        ('radialdirection', './/radialdirection', XMLComponent.get_float, 0.0),
+        ('cordlength', './/cordlength', XMLComponent.get_float, 0.0),
+        ('material', './/material', str, 'Unknown'),
+    ]
+
+@register_component('tubecoupler')
+class TubeCoupler(Subcomponent):
+    _FIELDS = [
+        ('axialoffset', './/axialoffset', XMLComponent.get_float, 0.0),
+        ('position', './/position', XMLComponent.get_float, 0.0),
+        ('overridemass', './/overridemass', XMLComponent.get_float, 0.0),
+        ('overridesubcomponentsmass', './/overridesubcomponentsmass', XMLComponent.get_bool, False),
+        ('material', './/material', str, 'Unknown'),
+        ('length', './/length', XMLComponent.get_float, 0.0),
+        ('radialposition', './/radialposition', XMLComponent.get_float, 0.0),
+        ('radialdirection', './/radialdirection', XMLComponent.get_float, 0.0),
+        ('outerradius', './/outerradius', XMLComponent.get_float, 0.0),
+        ('thickness', './/thickness', XMLComponent.get_float, 0.0),
+    ]
+
+@register_component('parachute')
+class Parachute(Subcomponent):
+    _FIELDS = [
+        ('axialoffset', './/axialoffset', XMLComponent.get_float, 0.0),
+        ('position', './/position', XMLComponent.get_float, 0.0),
+        ('overridemass', './/overridemass', XMLComponent.get_float, 0.0),
+        ('overridesubcomponentsmass', './/overridesubcomponentsmass', XMLComponent.get_bool, False),
+        ('packedlength', './/packedlength', XMLComponent.get_float, 0.0),
+        ('packedradius', './/packedradius', XMLComponent.get_float, 0.0),
+        ('radialposition', './/radialposition', XMLComponent.get_float, 0.0),
+        ('radialdirection', './/radialdirection', XMLComponent.get_float, 0.0),
+        ('cd', './/cd', XMLComponent.get_float, 0.0),
+        ('material', './/material', str, 'Unknown'),
+        ('deployevent', './/deployevent', str, 'ejection'),
+        ('deployaltitude', './/deployaltitude', XMLComponent.get_float, 0.0),
+        ('deploydelay', './/deploydelay', XMLComponent.get_float, 0.0),
+        ('diameter', './/diameter', XMLComponent.get_float, 0.0),
+        ('linecount', './/linecount', int, 0),
+        ('linelength', './/linelength', XMLComponent.get_float, 0.0),
+        ('linematerial', './/linematerial', str, 'Unknown'),
+    ]
+
+@register_component('railbutton')
+class RailButton(Subcomponent):
+    _FIELDS = [
+        ('instancecount', './/instancecount', int, 1),
+        ('instanceseparation', './/instanceseparation', XMLComponent.get_float, 0.0),
+        ('angleoffset', './/angleoffset', XMLComponent.get_float, 0.0),
+        ('axialoffset', './/axialoffset', XMLComponent.get_float, 0.0),
+        ('position', './/position', XMLComponent.get_float, 0.0),
+        ('overridemass', './/overridemass', XMLComponent.get_float, 0.0),
+        ('overridesubcomponentsmass', './/overridesubcomponentsmass', XMLComponent.get_bool, False),
+        ('finish', './/finish', str, 'smooth'),
+        ('material', './/material', str, 'Unknown'),
+        ('outerdiameter', './/outerdiameter', XMLComponent.get_float, 0.0),
+        ('innerdiameter', './/innerdiameter', XMLComponent.get_float, 0.0),
+        ('height', './/height', XMLComponent.get_float, 0.0),
+        ('baseheight', './/baseheight', XMLComponent.get_float, 0.0),
+        ('flangeheight', './/flangeheight', XMLComponent.get_float, 0.0),
+        ('screwheight', './/screwheight', XMLComponent.get_float, 0.0),
+    ]
+
+@register_component('masscomponent')
+class MassComponent(Subcomponent):
+    _FIELDS = [
+        ('axialoffset', './/axialoffset', XMLComponent.get_float, 0.0),
+        ('position', './/position', XMLComponent.get_float, 0.0),
+        ('overridemass', './/overridemass', XMLComponent.get_float, 0.0),
+        ('overridesubcomponentsmass', './/overridesubcomponentsmass', XMLComponent.get_bool, False),
+        ('packedlength', './/packedlength', XMLComponent.get_float, 0.0),
+        ('packedradius', './/packedradius', XMLComponent.get_float, 0.0),
+        ('radialposition', './/radialposition', XMLComponent.get_float, 0.0),
+        ('radialdirection', './/radialdirection', XMLComponent.get_float, 0.0),
+        ('mass', './/mass', XMLComponent.get_float, 0.0),
+        ('masscomponenttype', './/masscomponenttype', str, 'masscomponent'),
+    ]
+
+@register_component('innertube')
+class InnerTube(Subcomponent):
+    _FIELDS = [
+        ('axialoffset', './/axialoffset', XMLComponent.get_float, 0.0),
+        ('position', './/position', XMLComponent.get_float, 0.0),
+        ('overridemass', './/overridemass', XMLComponent.get_float, 0.0),
+        ('overridesubcomponentsmass', './/overridesubcomponentsmass', XMLComponent.get_bool, False),
+        ('material', './/material', str, 'Unknown'),
+        ('length', './/length', XMLComponent.get_float, 0.0),
+        ('radialposition', './/radialposition', XMLComponent.get_float, 0.0),
+        ('radialdirection', './/radialdirection', XMLComponent.get_float, 0.0),
+        ('outerradius', './/outerradius', XMLComponent.get_float, 0.0),
+        ('thickness', './/thickness', XMLComponent.get_float, 0.0),
+        ('clusterconfiguration', './/clusterconfiguration', str, 'single'),
+        ('clusterscale', './/clusterscale', XMLComponent.get_float, 1.0),
+        ('clusterrotation', './/clusterrotation', XMLComponent.get_float, 0.0),
+    ]
+
+@register_component('trapezoidfinset')
+class TrapezoidFinSet(Subcomponent):
+    _FIELDS = [
+        ('instancecount', './/instancecount', int, 1),
+        ('fincount', './/fincount', int, 0),
+        ('radiusoffset', './/radiusoffset', XMLComponent.get_float, 0.0),
+        ('angleoffset', './/angleoffset', XMLComponent.get_float, 0.0),
+        ('rotation', './/rotation', XMLComponent.get_float, 0.0),
+        ('axialoffset', './/axialoffset', XMLComponent.get_float, 0.0),
+        ('position', './/position', XMLComponent.get_float, 0.0),
+        ('overridemass', './/overridemass', XMLComponent.get_float, 0.0),
+        ('overridesubcomponentsmass', './/overridesubcomponentsmass', XMLComponent.get_bool, False),
+        ('finish', './/finish', str, 'smooth'),
+        ('material', './/material', str, 'Unknown'),
+        ('thickness', './/thickness', XMLComponent.get_float, 0.0),
+        ('crosssection', './/crosssection', str, 'square'),
+        ('cant', './/cant', XMLComponent.get_float, 0.0),
+        ('tabheight', './/tabheight', XMLComponent.get_float, 0.0),
+        ('tablength', './/tablength', XMLComponent.get_float, 0.0),
+        ('tabposition', './/tabposition', XMLComponent.get_float, 0.0),
+        ('filletradius', './/filletradius', XMLComponent.get_float, 0.0),
+        ('filletmaterial', './/filletmaterial', str, 'Unknown'),
+        ('rootchord', './/rootchord', XMLComponent.get_float, 0.0),
+        ('tipchord', './/tipchord', XMLComponent.get_float, 0.0),
+        ('sweeplength', './/sweeplength', XMLComponent.get_float, 0.0),
+        ('height', './/height', XMLComponent.get_float, 0.0),
+    ]
+
+@register_component('centeringring')
+class CenteringRing(Subcomponent):
+    _FIELDS = [
+        ('instancecount', './/instancecount', int, 1),
+        ('instanceseparation', './/instanceseparation', XMLComponent.get_float, 0.0),
+        ('axialoffset', './/axialoffset', XMLComponent.get_float, 0.0),
+        ('position', './/position', XMLComponent.get_float, 0.0),
+        ('overridemass', './/overridemass', XMLComponent.get_float, 0.0),
+        ('overridesubcomponentsmass', './/overridesubcomponentsmass', XMLComponent.get_bool, False),
+        ('material', './/material', str, 'Unknown'),
+        ('length', './/length', XMLComponent.get_float, 0.0),
+        ('radialposition', './/radialposition', XMLComponent.get_float, 0.0),
+        ('radialdirection', './/radialdirection', XMLComponent.get_float, 0.0),
+        ('outerradius', './/outerradius', XMLComponent.get_float, 0.0),
+        ('innerradius', './/innerradius', XMLComponent.get_float, 0.0),
+    ]
