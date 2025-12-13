@@ -19,6 +19,7 @@ class Motor(XMLComponent):
         ('length', './/length', XMLComponent.get_float, 0.0),
     ]
 
+
 @register_component('motormount')
 class MotorMount(XMLComponent):
     """
