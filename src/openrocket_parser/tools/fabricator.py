@@ -148,6 +148,8 @@ class MainScreen(Screen):
             shape_data = {'type': 'polygon', 'points': points, 'fin_info': fin}
         elif comp['type'] == 'ring':
             shape_data = {'type': 'ring', 'od': comp['od'], 'id': comp['id']}
+        elif comp['type'] == 'bulkhead':
+            shape_data = {'type': 'bulkhead', 'od': comp['od']}
 
         self.preview_area.draw_shape(shape_data)
 
@@ -160,7 +162,7 @@ class MainScreen(Screen):
         export_dir = settings['export_dir']
         if not os.path.exists(export_dir):
             os.makedirs(export_dir)
-        
+
         filename = os.path.join(export_dir, f"{self.selected_component['name'].replace(' ', '_')}.{settings['export_format']}")
         comp = self.selected_component
 
@@ -188,14 +190,14 @@ class MainScreen(Screen):
             min_y = min(p[1] for p in scaled_points)
             max_x = max(p[0] for p in scaled_points)
             max_y = max(p[1] for p in scaled_points)
-            
+
             # Calculate document dimensions
             width_px = (max_x - min_x) + 2 * margin
             height_px = (max_y - min_y) + 2 * margin
-            
+
             width_in = width_px / scale
             height_in = height_px / scale
-            
+
             # Initialize drawing with inch units
             dwg = svgwrite.Drawing(filename, size=(f"{width_in:.3f}in", f"{height_in:.3f}in"),
                                    viewBox=f"0 0 {width_px} {height_px}")
@@ -207,17 +209,17 @@ class MainScreen(Screen):
             offset_points = [(p[0] + offset_x, p[1] + offset_y) for p in scaled_points]
 
             dwg.add(dwg.polygon(points=offset_points, fill='none', stroke='black', stroke_width=1))
-            
+
             font_attrs = {'font_size': '12px', 'font_family': 'Arial', 'fill': 'blue', 'text_anchor': 'middle'}
-            
+
             dwg.add(dwg.text(f"Root: {fin.root_chord:.3f}\"", insert=(offset_x + (fin.root_chord * scale) / 2, offset_y - 10), **font_attrs))
-            
+
             # Tip Chord (Bottom)
             sweep_length = fin.height * math.tan(math.radians(fin.sweep_angle))
             tip_y = offset_y + fin.height * scale
             tip_start_x = offset_x + sweep_length * scale
             dwg.add(dwg.text(f"Tip: {fin.tip_chord:.3f}\"", insert=(tip_start_x + (fin.tip_chord * scale) / 2, tip_y + 20), **font_attrs))
-                             
+
             # Height (Right)
             max_x_offset = max(p[0] for p in offset_points)
             side_font_attrs = font_attrs.copy()
@@ -230,7 +232,7 @@ class MainScreen(Screen):
             # Scale dimensions
             od = comp['od'] * scale
             id = comp['id'] * scale
-            
+
             # Dimensions
             width_px = od + 2 * margin
             height_px = od + 2 * margin
@@ -245,11 +247,32 @@ class MainScreen(Screen):
 
             dwg.add(dwg.circle(center=center, r=od / 2, fill='none', stroke='black', stroke_width=1))
             dwg.add(dwg.circle(center=center, r=id / 2, fill='none', stroke='black', stroke_width=1))
-            
+
             font_attrs = {'font_size': '12px', 'font_family': 'Arial', 'fill': 'blue', 'text_anchor': 'middle'}
             dwg.add(dwg.text(f"OD: {comp['od']:.3f}\"", insert=(center[0], center[1] - od/2 - 10), **font_attrs))
             # ID Label (Bottom, outside OD to avoid interference)
             dwg.add(dwg.text(f"ID: {comp['id']:.3f}\"", insert=(center[0], center[1] + od/2 + 20), **font_attrs))
+
+        elif comp['type'] == 'bulkhead':
+            # Scale dimensions
+            od = comp['od'] * scale
+
+            # Dimensions
+            width_px = od + 2 * margin
+            height_px = od + 2 * margin
+            width_in = width_px / scale
+            height_in = height_px / scale
+
+            dwg = svgwrite.Drawing(filename, size=(f"{width_in:.3f}in", f"{height_in:.3f}in"), viewBox=f"0 0 {width_px} {height_px}")
+
+            # Center coordinates
+            center_coord = width_px / 2
+            center = (center_coord, center_coord)
+
+            dwg.add(dwg.circle(center=center, r=od / 2, fill='none', stroke='black', stroke_width=1))
+
+            font_attrs = {'font_size': '12px', 'font_family': 'Arial', 'fill': 'blue', 'text_anchor': 'middle'}
+            dwg.add(dwg.text(f"OD: {comp['od']:.3f}\"", insert=(center[0], center[1] - od/2 - 10), **font_attrs))
 
         dwg.save()
         self.lbl_status.text = f'Exported: {filename}'

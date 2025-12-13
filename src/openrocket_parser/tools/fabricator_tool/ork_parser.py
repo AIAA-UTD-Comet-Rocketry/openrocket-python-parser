@@ -46,7 +46,7 @@ def load_ork_file(filepath):
         for stage in rocket.stages:
             # Collect all things inside this stage
             all_components.extend(_collect_subcomponents(stage))
-    
+
     # 2. Fallback: If no stages found (or different structure), try root subcomponents
     if not all_components and hasattr(rocket, 'subcomponents'):
         all_components.extend(_collect_subcomponents(rocket))
@@ -63,7 +63,11 @@ def load_ork_file(filepath):
             data = _extract_ring_data(comp, name)
             if data:
                 extracted_components.append(data)
-                
+        elif class_name == 'Bulkhead':
+            data = _extract_bulkhead_data(comp, name)
+            if data:
+                extracted_components.append(data)
+
     return extracted_components
 
 
@@ -76,7 +80,7 @@ def _extract_fin_data(comp, name):
     """Extracts and calculates data for a TrapezoidFinSet."""
     height = _m_to_in(getattr(comp, 'height', 0.0))
     sweep_length = _m_to_in(getattr(comp, 'sweeplength', 0.0))
-    
+
     sweep_angle = 0.0
     if height > 0:
         sweep_angle = math.degrees(math.atan(sweep_length / height))
@@ -98,10 +102,21 @@ def _extract_ring_data(comp, name):
     """Extracts and calculates data for a CenteringRing."""
     outer_radius = _m_to_in(getattr(comp, 'outerradius', 0.0))
     inner_radius = _m_to_in(getattr(comp, 'innerradius', 0.0))
-    
+
     return {
         'name': name,
         'type': 'ring',
         'od': outer_radius * 2,
         'id': inner_radius * 2,
+    }
+
+
+def _extract_bulkhead_data(comp, name):
+    """Extracts and calculates data for a Bulkhead."""
+    outer_radius = _m_to_in(getattr(comp, 'outerradius', 0.0))
+
+    return {
+        'name': name,
+        'type': 'bulkhead',
+        'od': outer_radius * 2,
     }

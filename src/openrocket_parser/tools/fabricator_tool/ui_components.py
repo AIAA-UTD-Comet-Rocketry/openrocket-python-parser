@@ -23,7 +23,7 @@ class PreviewWidget(Widget):
         """
         app = App.get_running_app()
         settings = app.settings
-        
+
         logging.debug(f"--- draw_shape called for: {shape_data.get('type', 'None')} ---")
         self.canvas.clear()
         self.clear_widgets()
@@ -40,12 +40,14 @@ class PreviewWidget(Widget):
                 self._draw_polygon(shape_data, settings)
             elif shape_data['type'] == 'ring':
                 self._draw_ring(shape_data, settings)
+            elif shape_data['type'] == 'bulkhead':
+                self._draw_bulkhead(shape_data, settings)
 
     def _draw_polygon(self, shape_data, settings):
         """Draws a polygon (like a fin) on the canvas."""
         points = shape_data['points']
         ui_scale = settings['ui_scale']
-        
+
         min_x = min(p[0] for p in points)
         max_x = max(p[0] for p in points)
         min_y = min(p[1] for p in points)
@@ -64,7 +66,7 @@ class PreviewWidget(Widget):
             screen_points.extend([screen_x, screen_y])
 
         Line(points=screen_points, width=2, close=True)
-        
+
         if 'fin_info' in shape_data:
             self._add_fin_labels(shape_data['fin_info'], points, settings)
 
@@ -82,8 +84,22 @@ class PreviewWidget(Widget):
 
         Line(circle=(center_x, center_y, scaled_od / 2), width=2)
         Line(circle=(center_x, center_y, scaled_id / 2), width=2)
-        
+
         self._add_ring_labels(od, _id, center_x, center_y, scaled_od)
+
+    def _draw_bulkhead(self, shape_data, settings):
+        """Draws a bulkhead on the canvas."""
+        od = shape_data['od']
+        ui_scale = settings['ui_scale']
+
+        center_x = self.width / 2
+        center_y = self.height / 2
+
+        scaled_od = od * ui_scale
+
+        Line(circle=(center_x, center_y, scaled_od / 2), width=2)
+
+        self._add_bulkhead_labels(od, center_x, center_y, scaled_od)
 
     def _add_fin_labels(self, fin, points, settings):
         """Adds measurement labels for a fin."""
@@ -122,6 +138,10 @@ class PreviewWidget(Widget):
         """Adds measurement labels for a ring."""
         self.add_label(f"OD: {od:.2f}\"", center_x, center_y + (scaled_od / 2) + 20)
         self.add_label(f"ID: {_id:.2f}\"", center_x, center_y - (scaled_od / 2) - 20)
+
+    def _add_bulkhead_labels(self, od, center_x, center_y, scaled_od):
+        """Adds measurement labels for a bulkhead."""
+        self.add_label(f"OD: {od:.2f}\"", center_x, center_y + (scaled_od / 2) + 20)
 
     def add_label(self, text, x, y):
         """Adds a text label directly to this widget."""

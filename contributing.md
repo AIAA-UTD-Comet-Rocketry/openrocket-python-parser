@@ -2,7 +2,7 @@
 
 We welcome contributions to the OpenRocketParser library! This guide will walk you through the process of adding new components to the library.
 
-## Adding a New Component
+## Adding a New Component to the Parser
 
 To add a new component, you'll need to:
 
@@ -53,17 +53,53 @@ To add a new component, you'll need to:
         *   Call `component_factory()` with the `Element` to create an instance of your component. (_Note_: The library uses python's decorators (wrappers) to auto-call registered components, but in tests we need to call it manually)
         *   Use `assert` statements to verify that the attributes of your component instance match the values in your sample XML.
 
-5. **Run Tests:**
-    * Execute the tests to ensure your new component is correctly parsed and doesn't introduce any regressions.
-    * ```bash
-      pytest
-      ```
-      _Note_ If you have installed the library with pip as per the instructions - your tests will fail since the tested version will not include your new tests. If this happens follow these instructions:
-    ```bash
-    pip uninstall openrocket-python-parser
-    pip install -e .  # the -e indicates to pip to install the current code (.) in edit mode
-    pytest  # Now pytest will use your code instead of the pip installed library
+## Adding Fabricator Support for a New Component
+
+Once a component is recognized by the parser, you can add support for it in the fabricator tool.
+
+1.  **Update the ORK Parser (`ork_parser.py`):**
+    *   Open `src/openrocket_parser/tools/fabricator_tool/ork_parser.py`.
+    *   In the `load_ork_file` function, add a new `elif` condition to handle your component's class name.
+    *   Create a new extraction function (e.g., `_extract_my_component_data`) to pull the necessary geometric data from the component object and return it as a dictionary. Give it a unique `type`.
+
+    ```python
+    # In load_ork_file...
+    elif class_name == 'MyNewComponent':
+        data = _extract_my_component_data(comp, name)
+        if data:
+            extracted_components.append(data)
+
+    # New function...
+    def _extract_my_component_data(comp, name):
+        return {
+            'name': name,
+            'type': 'my_shape_type', # e.g., 'circle', 'polygon'
+            'od': _m_to_in(getattr(comp, 'outerradius', 0.0)) * 2,
+            # ... other geometric properties
+        }
     ```
 
-6.  **Submit a Pull Request:**
-    *   Commit your changes and submit a pull request to the project.
+2.  **Update the UI and Preview (`fabricator.py` and `ui_components.py`):**
+    *   In `src/openrocket_parser/tools/fabricator.py`, update the `select_component` method in the `MainScreen` class to recognize the new component `type` and prepare the `shape_data` for the preview widget.
+    *   In `src/openrocket_parser/tools/fabricator_tool/ui_components.py`, update the `draw_shape` method in the `PreviewWidget` class to handle the new `type`. You may need to add a new drawing method (e.g., `_draw_my_shape`).
+
+3.  **Update the SVG Export (`fabricator.py`):**
+    *   In `src/openrocket_parser/tools/fabricator.py`, update the `export_selection` method in the `MainScreen` class.
+    *   Add an `elif` block for your new component `type` to handle the SVG drawing logic. This will involve scaling the dimensions and using `svgwrite` to create the final shape.
+
+## Running Tests
+
+*   Execute the tests to ensure your new component is correctly parsed and doesn't introduce any regressions.
+*   ```bash
+    pytest
+    ```
+    _Note_: If you have installed the library with `pip` as per the instructions, your tests might fail because the installed version won't include your new changes. If this happens, follow these steps:
+    ```bash
+    pip uninstall openrocket-python-parser
+    pip install -e .  # The -e flag installs the current code in editable mode
+    pytest  # Now pytest will use your local code
+    ```
+
+## Submitting a Pull Request
+
+*   Commit your changes and submit a pull request to the project.
