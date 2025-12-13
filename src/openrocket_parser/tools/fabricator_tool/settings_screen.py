@@ -1,9 +1,11 @@
+from kivy.app import App
 from kivy.uix.screenmanager import Screen
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
 from kivy.uix.spinner import Spinner
 from kivy.uix.textinput import TextInput
 from kivy.uix.colorpicker import ColorPicker
+from kivy.uix.button import Button
 
 
 class SettingsScreen(Screen):
@@ -44,4 +46,33 @@ class SettingsScreen(Screen):
         layout.add_widget(self.units)
         self.conversion_value = 39.3701  # for inches
 
+        btn_back = Button(text="Back", size_hint_y=None, height=40)
+        btn_back.bind(on_press=self.go_to_main)
+        layout.add_widget(btn_back)
+
         self.add_widget(layout)
+
+    def on_enter(self, *args):
+        """Called when the screen is displayed."""
+        app = App.get_running_app()
+        self.export_format.text = app.settings['export_format']
+        self.export_dir.text = app.settings['export_dir']
+        self.dpi_scale.text = str(app.settings['dpi'])
+        self.ui_scale.text = str(app.settings['ui_scale'])
+        self.color_picker.color = app.settings['shape_color']
+        self.units.text = app.settings['units']
+
+    def on_leave(self, *args):
+        """Called when the screen is left."""
+        app = App.get_running_app()
+        app.settings['export_format'] = self.export_format.text
+        app.settings['export_dir'] = self.export_dir.text
+        app.settings['dpi'] = float(self.dpi_scale.text)
+        app.settings['ui_scale'] = int(self.ui_scale.text)
+        app.settings['shape_color'] = self.color_picker.color
+        app.settings['units'] = self.units.text
+        if self.units.text == 'inches':
+            app.settings['unit_conversion'] = 39.3701
+
+    def go_to_main(self, instance):
+        self.manager.current = 'main'

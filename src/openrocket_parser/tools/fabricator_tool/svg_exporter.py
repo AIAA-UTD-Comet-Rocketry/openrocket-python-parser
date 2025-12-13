@@ -17,12 +17,12 @@ def export_to_svg(component):
         str: The filename of the generated SVG file.
     """
     filename = f"{component['name'].replace(' ', '_')}.svg"
-    
+
     if component['type'] == 'fin':
         _export_fin(component, filename)
     elif component['type'] == 'ring':
         _export_ring(component, filename)
-        
+
     return filename
 
 
@@ -67,11 +67,12 @@ def _export_fin(comp, filename):
     _add_svg_fin_labels(dwg, fin, offset_points, scale)
     dwg.save()
 
+
 def _export_ring(comp, filename):
     """Exports a ring component to SVG."""
     scale = 96.0
     margin = 0.5 * scale
-    
+
     od = comp['od'] * scale
     _id = comp['id'] * scale
 
@@ -92,19 +93,22 @@ def _export_ring(comp, filename):
     _add_svg_ring_labels(dwg, comp, center, od)
     dwg.save()
 
+
 def _add_svg_fin_labels(dwg, fin, offset_points, scale):
     """Adds measurement labels to a fin SVG."""
     font_attrs = {'font_size': '12px', 'font_family': 'Arial', 'fill': 'blue', 'text_anchor': 'middle'}
-    
+
     min_x = min(p[0] for p in offset_points)
     max_x = max(p[0] for p in offset_points)
     min_y = min(p[1] for p in offset_points)
     max_y = max(p[1] for p in offset_points)
 
     # Root Chord
-    dwg.add(dwg.text(f"Root: {fin.root_chord:.3f}\"", insert=(min_x + (fin.root_chord * scale) / 2, min_y - 10), **font_attrs))
+    dwg.add(dwg.text(f"Root: {fin.root_chord:.3f}\"", insert=(min_x + (fin.root_chord * scale) / 2, min_y - 10),
+                     **font_attrs))
     # Tip Chord
-    dwg.add(dwg.text(f"Tip: {fin.tip_chord:.3f}\"", insert=(max_x - (fin.tip_chord * scale) / 2, max_y + 20), **font_attrs))
+    dwg.add(
+        dwg.text(f"Tip: {fin.tip_chord:.3f}\"", insert=(max_x - (fin.tip_chord * scale) / 2, max_y + 20), **font_attrs))
     # Height
     side_attrs = font_attrs.copy()
     side_attrs['text_anchor'] = 'start'
@@ -112,10 +116,12 @@ def _add_svg_fin_labels(dwg, fin, offset_points, scale):
     # Sweep Angle
     end_attrs = font_attrs.copy()
     end_attrs['text_anchor'] = 'end'
-    dwg.add(dwg.text(f"Sweep: {fin.sweep_angle:.1f}°", insert=(min_x - 10, min_y + (fin.height * scale) / 2), **end_attrs))
+    dwg.add(
+        dwg.text(f"Sweep: {fin.sweep_angle:.1f}°", insert=(min_x - 10, min_y + (fin.height * scale) / 2), **end_attrs))
+
 
 def _add_svg_ring_labels(dwg, comp, center, od):
     """Adds measurement labels to a ring SVG."""
     font_attrs = {'font_size': '12px', 'font_family': 'Arial', 'fill': 'blue', 'text_anchor': 'middle'}
-    dwg.add(dwg.text(f"OD: {comp['od']:.3f}\"", insert=(center[0], center[1] - od/2 - 10), **font_attrs))
-    dwg.add(dwg.text(f"ID: {comp['id']:.3f}\"", insert=(center[0], center[1] + od/2 + 20), **font_attrs))
+    dwg.add(dwg.text(f"OD: {comp['od']:.3f}\"", insert=(center[0], center[1] - od / 2 - 10), **font_attrs))
+    dwg.add(dwg.text(f"ID: {comp['id']:.3f}\"", insert=(center[0], center[1] + od / 2 + 20), **font_attrs))

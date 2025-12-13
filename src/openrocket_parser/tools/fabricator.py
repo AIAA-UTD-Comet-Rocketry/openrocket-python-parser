@@ -1,7 +1,6 @@
 import logging
 from dataclasses import dataclass
 import math
-
 import argparse
 import kivy
 from kivy.app import App
@@ -15,11 +14,14 @@ from kivy.uix.filechooser import FileChooserListView
 from kivy.uix.popup import Popup
 from kivy.uix.widget import Widget
 from kivy.graphics import Color, Line, Ellipse
+from kivy.uix.screenmanager import ScreenManager, Screen
 import svgwrite
 import os
+
 from tools.fabricator_tool.ork_parser import load_ork_file
 from tools.fabricator_tool.ui_components import PreviewWidget
 from tools.fabricator_tool.geometry import GeometryEngine
+from tools.fabricator_tool.settings_screen import SettingsScreen
 
 
 @dataclass
@@ -37,12 +39,11 @@ class FinConfiguration:
     tab_pos: float = 0.0
 
 
-class RocketBuilder(BoxLayout):
+class MainScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.orientation = 'vertical'
-        self.padding = 10
-        self.spacing = 10
+        self.name = 'main'
+        layout = BoxLayout(orientation='vertical', padding=10, spacing=10)
 
         # State
         self.components = []
@@ -53,9 +54,12 @@ class RocketBuilder(BoxLayout):
         btn_load = Button(text="Load .ork file", background_color=(0.2, 0.6, 0.8, 1))
         btn_load.bind(on_press=self.show_load_dialog)
         self.lbl_status = Label(text='No file loaded')
+        btn_settings = Button(text="Settings")
+        btn_settings.bind(on_press=self.go_to_settings)
         header.add_widget(btn_load)
         header.add_widget(self.lbl_status)
-        self.add_widget(header)
+        header.add_widget(btn_settings)
+        layout.add_widget(header)
 
         # Main Content
         content = BoxLayout(orientation='horizontal', spacing=10)
@@ -72,14 +76,19 @@ class RocketBuilder(BoxLayout):
         self.preview_area = PreviewWidget()
         content.add_widget(self.preview_area)
 
-        self.add_widget(content)
+        layout.add_widget(content)
 
         # Footer
         footer = BoxLayout(size_hint_y=0.1, spacing=10)
         btn_export = Button(text='Export Selection to SVG', background_color=(0.2, 0.8, 0.2, 1))
         btn_export.bind(on_press=self.export_selection)
         footer.add_widget(btn_export)
-        self.add_widget(footer)
+        layout.add_widget(footer)
+
+        self.add_widget(layout)
+
+    def go_to_settings(self, instance):
+        self.manager.current = 'settings'
 
     def show_load_dialog(self, instance):
         self.load_file(r"C:\Users\fenrr\iCloudDrive\Rocketry\L1 - Silver Surfer\rocket.ork")
@@ -125,12 +134,17 @@ class RocketBuilder(BoxLayout):
             self.lbl_status.text = 'Error: No component selected'
             return
 
-        filename = f"{self.selected_component['name'].replace(' ', '_')}.svg"
-        comp = self.selected_component
+        settings = App.get_running_app().settings
+        export_dir = settings['export_dir']
+        if not os.path.exists(export_dir):
+            os.makedirs(export_dir)
         
-        # Use 96 DPI for scaling (1 inch = 96 px)
-        scale = 96.0 
-        margin = 0.5 * scale  # 0.5 inch margin
+        filename = os.path.join(export_dir, f"{self.selected_component['name'].replace(' ', '_')}.{settings['export_format']}")
+        comp = self.selected_component
+
+        # 96px = 1 inch
+        scale = settings['dpi']
+        margin = 0.5 * scale
 
         if comp['type'] == 'fin':
             fin = FinConfiguration(
@@ -161,7 +175,7 @@ class RocketBuilder(BoxLayout):
             height_in = height_px / scale
             
             # Initialize drawing with inch units
-            dwg = svgwrite.Drawing(filename, size=(f"{width_in:.3f}in", f"{height_in:.3f}in"), 
+            dwg = svgwrite.Drawing(filename, size=(f"{width_in:.3f}in", f"{height_in:.3f}in"),
                                    viewBox=f"0 0 {width_px} {height_px}")
 
             offset_x = -min_x + margin
@@ -172,41 +186,23 @@ class RocketBuilder(BoxLayout):
 
             dwg.add(dwg.polygon(points=offset_points, fill='none', stroke='black', stroke_width=1))
             
-            # Measurements
-            font_attrs = {
-                'font_size': '12px',
-                'font_family': 'Arial',
-                'fill': 'blue',
-                'text_anchor': 'middle'
-            }
+            font_attrs = {'font_size': '12px', 'font_family': 'Arial', 'fill': 'blue', 'text_anchor': 'middle'}
             
-            # Root Chord (Top)
-            dwg.add(dwg.text(f"Root: {fin.root_chord:.3f}\"", 
-                             insert=(offset_x + (fin.root_chord * scale) / 2, offset_y - 10),
-                             **font_attrs))
+            dwg.add(dwg.text(f"Root: {fin.root_chord:.3f}\"", insert=(offset_x + (fin.root_chord * scale) / 2, offset_y - 10), **font_attrs))
             
             # Tip Chord (Bottom)
             sweep_length = fin.height * math.tan(math.radians(fin.sweep_angle))
             tip_y = offset_y + fin.height * scale
             tip_start_x = offset_x + sweep_length * scale
-            dwg.add(dwg.text(f"Tip: {fin.tip_chord:.3f}\"", 
-                             insert=(tip_start_x + (fin.tip_chord * scale) / 2, tip_y + 20),
-                             **font_attrs))
+            dwg.add(dwg.text(f"Tip: {fin.tip_chord:.3f}\"", insert=(tip_start_x + (fin.tip_chord * scale) / 2, tip_y + 20), **font_attrs))
                              
             # Height (Right)
             max_x_offset = max(p[0] for p in offset_points)
             side_font_attrs = font_attrs.copy()
             side_font_attrs['text_anchor'] = 'start'
             
-            dwg.add(dwg.text(f"H: {fin.height:.3f}\"", 
-                             insert=(max_x_offset + 10, offset_y + (fin.height * scale) / 2),
-                             **side_font_attrs))
-
-            # Sweep Angle (Left of the shape, to avoid interference)
-            # Position it to the left of the leading edge
-            dwg.add(dwg.text(f"Sweep: {fin.sweep_angle:.1f}°", 
-                             insert=(offset_x - 10, offset_y + (fin.height * scale) / 2),
-                             **{'font_size': '12px', 'font_family': 'Arial', 'fill': 'blue', 'text_anchor': 'end'}))
+            dwg.add(dwg.text(f"H: {fin.height:.3f}\"", insert=(max_x_offset + 10, offset_y + (fin.height * scale) / 2), **side_font_attrs))
+            dwg.add(dwg.text(f"Sweep: {fin.sweep_angle:.1f}°", insert=(offset_x - 10, offset_y + (fin.height * scale) / 2), **{'font_size': '12px', 'font_family': 'Arial', 'fill': 'blue', 'text_anchor': 'end'}))
 
         elif comp['type'] == 'ring':
             # Scale dimensions
@@ -219,8 +215,7 @@ class RocketBuilder(BoxLayout):
             width_in = width_px / scale
             height_in = height_px / scale
 
-            dwg = svgwrite.Drawing(filename, size=(f"{width_in:.3f}in", f"{height_in:.3f}in"), 
-                                   viewBox=f"0 0 {width_px} {height_px}")
+            dwg = svgwrite.Drawing(filename, size=(f"{width_in:.3f}in", f"{height_in:.3f}in"), viewBox=f"0 0 {width_px} {height_px}")
 
             # Center coordinates
             center_coord = width_px / 2
@@ -229,13 +224,7 @@ class RocketBuilder(BoxLayout):
             dwg.add(dwg.circle(center=center, r=od / 2, fill='none', stroke='black', stroke_width=1))
             dwg.add(dwg.circle(center=center, r=id / 2, fill='none', stroke='black', stroke_width=1))
             
-            font_attrs = {
-                'font_size': '12px',
-                'font_family': 'Arial',
-                'fill': 'blue',
-                'text_anchor': 'middle'
-            }
-            # OD Label (Top, outside)
+            font_attrs = {'font_size': '12px', 'font_family': 'Arial', 'fill': 'blue', 'text_anchor': 'middle'}
             dwg.add(dwg.text(f"OD: {comp['od']:.3f}\"", insert=(center[0], center[1] - od/2 - 10), **font_attrs))
             # ID Label (Bottom, outside OD to avoid interference)
             dwg.add(dwg.text(f"ID: {comp['id']:.3f}\"", insert=(center[0], center[1] + od/2 + 20), **font_attrs))
@@ -245,15 +234,30 @@ class RocketBuilder(BoxLayout):
 
 
 class RocketApp(App):
+    def __init__(self, **kwargs):
+        super().__init__()
+        self.settings = None
+
     def build(self):
-        return RocketBuilder()
+        self.settings = {
+            'export_format': 'svg',
+            'export_dir': '.',
+            'dpi': 96.0,
+            'ui_scale': 50,
+            'shape_color': (1, 1, 0, 1),
+            'unit_conversion': 39.3701,
+            'units': 'inches'
+        }
+
+        sm = ScreenManager()
+        sm.add_widget(MainScreen(name='main'))
+        sm.add_widget(SettingsScreen(name='settings'))
+        return sm
 
 
 def main():
-    """Main function to parse arguments and launch the visualizer."""
     parser = argparse.ArgumentParser(description="Generate 2D files from OpenRocket components for fabrication.")
 
-    # Load data using our library
     logging.info(f"Opening fabricator...")
     RocketApp().run()
 
