@@ -8,6 +8,7 @@ from xml.etree.ElementTree import Element
 
 COMPONENT_REGISTRY = {}
 
+
 def register_component(tag_name: str):
     """A decorator to automatically register component classes in the factory."""
 
@@ -100,6 +101,7 @@ class XMLComponent:
             return False
         return value_str.strip().lower() in ['true', 'yes', '1']
 
+
 @register_component('subcomponent')
 class Subcomponent(XMLComponent):
     """"
@@ -121,6 +123,7 @@ class Subcomponent(XMLComponent):
             component_factory(e) for e in self.findall('.//subcomponents/*')
         ]
 
+
 @register_component('bulkhead')
 class Bulkhead(Subcomponent):
     _FIELDS = [
@@ -137,6 +140,7 @@ class Bulkhead(Subcomponent):
         ('outerradius', './/outerradius', XMLComponent.get_float, 0.0),
     ]
 
+
 @register_component('shockcord')
 class ShockCord(Subcomponent):
     _FIELDS = [
@@ -152,6 +156,7 @@ class ShockCord(Subcomponent):
         ('material', './/material', str, 'Unknown'),
     ]
 
+
 @register_component('tubecoupler')
 class TubeCoupler(Subcomponent):
     _FIELDS = [
@@ -166,6 +171,7 @@ class TubeCoupler(Subcomponent):
         ('outerradius', './/outerradius', XMLComponent.get_float, 0.0),
         ('thickness', './/thickness', XMLComponent.get_float, 0.0),
     ]
+
 
 @register_component('parachute')
 class Parachute(Subcomponent):
@@ -189,6 +195,7 @@ class Parachute(Subcomponent):
         ('linematerial', './/linematerial', str, 'Unknown'),
     ]
 
+
 @register_component('railbutton')
 class RailButton(Subcomponent):
     _FIELDS = [
@@ -209,6 +216,7 @@ class RailButton(Subcomponent):
         ('screwheight', './/screwheight', XMLComponent.get_float, 0.0),
     ]
 
+
 @register_component('masscomponent')
 class MassComponent(Subcomponent):
     _FIELDS = [
@@ -223,6 +231,7 @@ class MassComponent(Subcomponent):
         ('mass', './/mass', XMLComponent.get_float, 0.0),
         ('masscomponenttype', './/masscomponenttype', str, 'masscomponent'),
     ]
+
 
 @register_component('innertube')
 class InnerTube(Subcomponent):
@@ -241,6 +250,7 @@ class InnerTube(Subcomponent):
         ('clusterscale', './/clusterscale', XMLComponent.get_float, 1.0),
         ('clusterrotation', './/clusterrotation', XMLComponent.get_float, 0.0),
     ]
+
 
 @register_component('trapezoidfinset')
 class TrapezoidFinSet(Subcomponent):
@@ -269,6 +279,7 @@ class TrapezoidFinSet(Subcomponent):
         ('sweeplength', './/sweeplength', XMLComponent.get_float, 0.0),
         ('height', './/height', XMLComponent.get_float, 0.0),
     ]
+
 
 @register_component('centeringring')
 class CenteringRing(Subcomponent):

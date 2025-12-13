@@ -13,9 +13,9 @@ license-files = []
 [project]
 name = "openrocket-python-parser"
 # Update accordingly when a release is tagged as version.
-version = "0.3.0"
+version = "0.4.0"
 authors = [
-  { name="AIAA UTD Comet Rocketry, Payload", email="fenrriquez@gmail.com" },
+  { name="AIAA UTD Comet Rocketry, Payload", email="fie150030@utdallas.edu" },
 ]
 description = "A Python library to parse OpenRocket (.ork) XML files, including simulation data."
 readme = "README.md"
@@ -28,13 +28,15 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Visualization",
     "Topic :: Software Development :: Libraries :: Python Modules"
 ]
-# This is crucial! It tells pip what other libraries yours needs to run.
+
 dependencies = [
-    "pandas>=1.5.0"
+    "argparse>=1.4.0",
+    "pandas>=1.5.0",
 ]
 
 [project.optional-dependencies]
 visualizer = ["matplotlib"]
+fabricator = ['svgwrite']
 
 [project.urls]
 "Homepage" = "https://github.com/AIAA-UTD-Comet-Rocketry/openrocket-python-parser"
@@ -42,6 +44,7 @@ visualizer = ["matplotlib"]
 
 [project.scripts]
 openrocket-visualizer = "openrocket_parser.tools.flight_visualizer:main"
+openrocket-fabricator = "openrocket_parser.tools.fabricator:main"
 
 [tool.setuptools.packages.find]
-where = ["src"]
+where = ["src/openrocket_parser"]
