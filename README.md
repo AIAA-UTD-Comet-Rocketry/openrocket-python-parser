@@ -102,6 +102,21 @@ openrocket-visualizer tests/sample.ork --speed 2 --no-repeat
 
 The fabricator tool allows you to extract 2D-printable components from an OpenRocket design and export them to SVG files for manufacturing.
 
+### Basic Usage
+```shell
+usage: openrocket-fabricator [-h]
+
+Launch the fabricator helper tool
+
+options:
+  -h, --help     show this help message and exit
+```
+
+```shell
+# Example
+openrocket-fabricator
+```
+
 ### How to Use
 
 1.  **Launch the tool** by running `openrocket-fabricator` in your terminal.
