@@ -6,27 +6,7 @@ import math
 from geometry import FinConfiguration, GeometryEngine
 
 
-def export_to_svg(component):
-    """
-    Exports a given component to an SVG file.
-
-    Args:
-        component (dict): A dictionary containing the component's data.
-
-    Returns:
-        str: The filename of the generated SVG file.
-    """
-    filename = f"{component['name'].replace(' ', '_')}.svg"
-
-    if component['type'] == 'fin':
-        _export_fin(component, filename)
-    elif component['type'] == 'ring':
-        _export_ring(component, filename)
-
-    return filename
-
-
-def _export_fin(comp, filename):
+def _export_fin(comp, filename, settings):
     """Exports a fin component to SVG."""
     fin = FinConfiguration(
         root_chord=comp['root_chord'],
@@ -40,7 +20,7 @@ def _export_fin(comp, filename):
     points = GeometryEngine.calculate_trapezoidal_fin(fin)
 
     # Use 96 DPI for scaling (1 inch = 96 px)
-    scale = 96.0
+    scale = ui_scale = settings['ui_scale']
     margin = 0.5 * scale  # 0.5 inch margin
 
     scaled_points = [(p[0] * scale, p[1] * scale) for p in points]

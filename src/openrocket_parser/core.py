@@ -4,8 +4,18 @@ Collection of base functionality to load OpenRocket .ork files
 import logging
 from typing import Optional
 import xml.etree.ElementTree as ET
+import zipfile
 
 from openrocket_parser.components.rocket import Rocket
+
+
+def export_xml_from_ork(filepath: str) -> bytes:
+    with zipfile.ZipFile(filepath, 'r') as zip_ref:
+        for name in zip_ref.namelist():
+            if name.endswith('.xml') or name.endswith('.ork'):
+                with zip_ref.open(name) as xml_file:
+                    return xml_file.read()
+    raise ValueError("No XML or ORK file found inside archive.")
 
 
 def load_rocket_from_xml(file_path: str) -> Rocket:
@@ -26,8 +36,9 @@ def load_rocket_from_xml_safe(file_path: str, root_ele: str = 'rocket') -> Optio
     """Loads an entire rocket definition from an OpenRocket XML file, catching errors if they happen """
 
     try:
-        tree = ET.parse(file_path)
-        root = tree.getroot()
+        # Parse the exported .ork file to extract the internal ork file directly
+        internal_xml_rocket_file = export_xml_from_ork(file_path)
+        root = ET.fromstring(internal_xml_rocket_file)
         # The main rocket element is usually <openrocket> or <rocket>, but it can be customized if needed.
         rocket_element = root.find(f'.//{root_ele}')
         if rocket_element is None:

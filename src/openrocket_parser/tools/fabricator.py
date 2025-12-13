@@ -53,11 +53,9 @@ class MainScreen(Screen):
         header = BoxLayout(size_hint_y=0.1, spacing=10)
         btn_load = Button(text="Load .ork file", background_color=(0.2, 0.6, 0.8, 1))
         btn_load.bind(on_press=self.show_load_dialog)
-        self.lbl_status = Label(text='No file loaded')
-        btn_settings = Button(text="Settings")
+        btn_settings = Button(text="Settings", font_size='24sp')
         btn_settings.bind(on_press=self.go_to_settings)
         header.add_widget(btn_load)
-        header.add_widget(self.lbl_status)
         header.add_widget(btn_settings)
         layout.add_widget(header)
 
@@ -85,13 +83,37 @@ class MainScreen(Screen):
         footer.add_widget(btn_export)
         layout.add_widget(footer)
 
+        self.lbl_status = Label(text='No file loaded', size_hint_y=0.1)
+        layout.add_widget(self.lbl_status)
+
         self.add_widget(layout)
 
     def go_to_settings(self, instance):
         self.manager.current = 'settings'
 
     def show_load_dialog(self, instance):
-        self.load_file(r"C:\Users\fenrr\iCloudDrive\Rocketry\L1 - Silver Surfer\rocket.ork")
+        content = BoxLayout(orientation='vertical', spacing=10)
+        filechooser = FileChooserListView(path=os.getcwd(), filters=['*.ork'])
+        content.add_widget(filechooser)
+
+        buttons = BoxLayout(size_hint_y=None, height=44, spacing=5)
+        btn_load = Button(text='Load')
+        btn_cancel = Button(text='Cancel')
+        buttons.add_widget(btn_load)
+        buttons.add_widget(btn_cancel)
+        content.add_widget(buttons)
+
+        popup = Popup(title='Load .ork File', content=content, size_hint=(0.9, 0.9))
+
+        def load_selected_file(instance):
+            if filechooser.selection:
+                self.load_file(filechooser.selection[0])
+                popup.dismiss()
+
+        btn_load.bind(on_press=load_selected_file)
+        btn_cancel.bind(on_press=popup.dismiss)
+
+        popup.open()
 
     def load_file(self, filepath):
         self.lbl_status.text = f"Loaded: {os.path.basename(filepath)}"
