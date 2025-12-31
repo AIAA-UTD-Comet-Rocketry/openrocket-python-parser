@@ -125,7 +125,11 @@ openrocket-fabricator
 3.  **Select a component** from the list on the left. A preview will appear on the right.
 ![BulkheadScreen.jpg](docs/tools/fabricator/BulkheadScreen.jpg)
 ![CenteringRingSelection.jpg](docs/tools/fabricator/CenteringRingSelection.jpg)
-4.  **Export the selection** to an SVG file using the "Export Selection to SVG" button.
+4.  **Configure Holes (Optional)**: For centering rings and bulkheads, you can now add a custom hole.
+    *   Enable the hole using the checkbox in the settings panel.
+    *   Set the diameter.
+    *   Choose to center it automatically or specify X/Y offsets.
+5.  **Export the selection** to an SVG file using the "Export Selection to SVG" button.
 ![ExportedSVG.jpg](docs/tools/fabricator/ExportedSVG.jpg)
 
 ### Customizations
@@ -162,5 +166,6 @@ The total time for all the pieces was just under 24 minutes, with conservative c
 
 ## Upcoming Features
 
+*   **Multiple Holes & Symmetry:** Support for adding multiple holes with symmetry options (e.g., for mounting patterns).
 *   **Tolerance Adjustments:** Implement a feature to apply a tolerance value that minimally scales the exported shapes. This can compensate for the kerf of a laser cutter, the diameter of an end mill, or other tooling variations.
 *   **Configurable Labels:** Add options to configure if and where dimension labels are added to the exported SVG file, giving you more control over the final output.
