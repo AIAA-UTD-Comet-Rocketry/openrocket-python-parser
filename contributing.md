@@ -105,7 +105,9 @@ If your new component requires specific settings (like hole configuration, slot 
 3.  **Handle Settings in Export:**
     *   In `src/openrocket_parser/tools/fabricator_tool/svg_exporter.py`, update your export function (e.g., `_export_my_component`) to accept and use the new settings dictionary to modify the SVG output.
 
-## Running Tests
+## Testing Your Changes
+
+### Running Unit Tests
 
 *   Execute the tests to ensure your new component is correctly parsed and doesn't introduce any regressions.
 *   ```bash
@@ -116,6 +118,29 @@ If your new component requires specific settings (like hole configuration, slot 
     pip uninstall openrocket-python-parser
     pip install -e .  # The -e flag installs the current code in editable mode
     pytest  # Now pytest will use your local code
+    ```
+
+### Testing the Release Locally
+
+Before submitting a pull request, it's good practice to verify that your changes will work correctly when the package is installed by a user. We have provided a script to help with this.
+
+1.  **Run the local release test script:**
+    ```bash
+    ./test_release_locally.sh
+    ```
+    This script will:
+    *   Clean up old build artifacts.
+    *   Build the package wheel.
+    *   Create a temporary virtual environment.
+    *   Install the package into that environment.
+    *   Verify that the library can be imported.
+    *   Check that the CLI tools (`openrocket-visualizer` and `openrocket-fabricator`) are installed and executable.
+
+2.  **Manual Verification (Optional):**
+    If the script passes, you can also activate the temporary virtual environment and try running the tools manually:
+    ```bash
+    source venv_test/bin/activate
+    openrocket-fabricator
     ```
 
 ## Submitting a Pull Request
