@@ -3,8 +3,10 @@ Parses OpenRocket (.ork) files to extract component data for laser cutting.
 """
 import math
 import logging
+from kivy.app import App
 
 from openrocket_parser import load_rocket_from_xml
+from openrocket_parser.units import METERS_TO_INCHES
 
 
 def _collect_subcomponents(component):
@@ -71,15 +73,18 @@ def load_ork_file(filepath):
     return extracted_components
 
 
-def _m_to_in(meters):
-    """Converts meters to inches."""
-    return (meters or 0.0) * 39.3701
+def _convert_units(meters):
+    """Converts meters to the currently selected unit (inches or mm)."""
+    app = App.get_running_app()
+    conversion = app.settings.get('unit_conversion', METERS_TO_INCHES)
+    # logging.info(f"Converting {meters}m with factor {conversion}")
+    return (meters or 0.0) * conversion
 
 
 def _extract_fin_data(comp, name):
     """Extracts and calculates data for a TrapezoidFinSet."""
-    height = _m_to_in(getattr(comp, 'height', 0.0))
-    sweep_length = _m_to_in(getattr(comp, 'sweeplength', 0.0))
+    height = _convert_units(getattr(comp, 'height', 0.0))
+    sweep_length = _convert_units(getattr(comp, 'sweeplength', 0.0))
 
     sweep_angle = 0.0
     if height > 0:
@@ -88,20 +93,20 @@ def _extract_fin_data(comp, name):
     return {
         'name': name,
         'type': 'fin',
-        'root_chord': _m_to_in(getattr(comp, 'rootchord', 0.0)),
-        'tip_chord': _m_to_in(getattr(comp, 'tipchord', 0.0)),
+        'root_chord': _convert_units(getattr(comp, 'rootchord', 0.0)),
+        'tip_chord': _convert_units(getattr(comp, 'tipchord', 0.0)),
         'height': height,
         'sweep_angle': sweep_angle,
-        'tab_height': _m_to_in(getattr(comp, 'tabheight', 0.0)),
-        'tab_length': _m_to_in(getattr(comp, 'tablength', 0.0)),
-        'tab_pos': _m_to_in(getattr(comp, 'tabposition', 0.0)),
+        'tab_height': _convert_units(getattr(comp, 'tabheight', 0.0)),
+        'tab_length': _convert_units(getattr(comp, 'tablength', 0.0)),
+        'tab_pos': _convert_units(getattr(comp, 'tabposition', 0.0)),
     }
 
 
 def _extract_ring_data(comp, name):
     """Extracts and calculates data for a CenteringRing."""
-    outer_radius = _m_to_in(getattr(comp, 'outerradius', 0.0))
-    inner_radius = _m_to_in(getattr(comp, 'innerradius', 0.0))
+    outer_radius = _convert_units(getattr(comp, 'outerradius', 0.0))
+    inner_radius = _convert_units(getattr(comp, 'innerradius', 0.0))
 
     return {
         'name': name,
@@ -113,7 +118,7 @@ def _extract_ring_data(comp, name):
 
 def _extract_bulkhead_data(comp, name):
     """Extracts and calculates data for a Bulkhead."""
-    outer_radius = _m_to_in(getattr(comp, 'outerradius', 0.0))
+    outer_radius = _convert_units(getattr(comp, 'outerradius', 0.0))
 
     return {
         'name': name,
