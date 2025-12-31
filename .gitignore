@@ -34,3 +34,4 @@ env.bak/
 venv.bak/
 extra/
 exported/*.svg
+.venv_test
