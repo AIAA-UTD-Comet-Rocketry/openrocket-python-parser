@@ -74,18 +74,36 @@ Once a component is recognized by the parser, you can add support for it in the 
         return {
             'name': name,
             'type': 'my_shape_type', # e.g., 'circle', 'polygon'
-            'od': _m_to_in(getattr(comp, 'outerradius', 0.0)) * 2,
+            'od': _convert_units(getattr(comp, 'outerradius', 0.0)) * 2,
             # ... other geometric properties
         }
     ```
 
-2.  **Update the UI and Preview (`fabricator.py` and `ui_components.py`):**
-    *   In `src/openrocket_parser/tools/fabricator.py`, update the `select_component` method in the `MainScreen` class to recognize the new component `type` and prepare the `shape_data` for the preview widget.
+2.  **Update the UI and Preview (`main_screen.py` and `ui_components.py`):**
+    *   In `src/openrocket_parser/tools/fabricator_tool/main_screen.py`, update the `update_preview` method in the `MainScreen` class to recognize the new component `type` and prepare the `shape_data` for the preview widget.
     *   In `src/openrocket_parser/tools/fabricator_tool/ui_components.py`, update the `draw_shape` method in the `PreviewWidget` class to handle the new `type`. You may need to add a new drawing method (e.g., `_draw_my_shape`).
 
-3.  **Update the SVG Export (`fabricator.py`):**
-    *   In `src/openrocket_parser/tools/fabricator.py`, update the `export_selection` method in the `MainScreen` class.
+3.  **Update the SVG Export (`svg_exporter.py`):**
+    *   In `src/openrocket_parser/tools/fabricator_tool/svg_exporter.py`, update the `export_component_to_svg` function.
     *   Add an `elif` block for your new component `type` to handle the SVG drawing logic. This will involve scaling the dimensions and using `svgwrite` to create the final shape.
+
+## Adding New Component Settings
+
+If your new component requires specific settings (like hole configuration, slot size, etc.), you can add them to the `ComponentSettingsPanel`.
+
+1.  **Update `ui_components.py`:**
+    *   Open `src/openrocket_parser/tools/fabricator_tool/ui_components.py`.
+    *   Locate the `ComponentSettingsPanel` class.
+    *   In `__init__`, add new UI widgets (Labels, TextInputs, CheckBoxes) for your setting. Initially set them to be hidden (`opacity=0`, `disabled=True`) or visible depending on your design.
+    *   Update `update_for_component` to show/enable your new widgets when the appropriate component type is selected.
+    *   Update `get_settings` to include the values from your new widgets in the returned dictionary.
+    *   Update `reset` to clear the values of your new widgets.
+
+2.  **Pass Settings to Export:**
+    *   In `src/openrocket_parser/tools/fabricator_tool/main_screen.py`, the `export_selection` method retrieves settings via `self.settings_panel.get_settings()`. Ensure your new settings are being passed correctly to `export_component_to_svg`.
+
+3.  **Handle Settings in Export:**
+    *   In `src/openrocket_parser/tools/fabricator_tool/svg_exporter.py`, update your export function (e.g., `_export_my_component`) to accept and use the new settings dictionary to modify the SVG output.
 
 ## Running Tests
 
