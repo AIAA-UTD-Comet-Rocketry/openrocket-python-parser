@@ -19,12 +19,17 @@ def export_component_to_svg(comp, filename, settings, hole_settings=None):
         _export_bulkhead(comp, filename, settings, hole_settings)
 
 
-def _export_fin(comp, filename, settings):
-    """Exports a fin component to SVG."""
+def _get_unit_to_px(settings):
     dpi = settings['dpi']
     is_mm = settings['units'] == 'millimeters'
-    unit_to_px = dpi if not is_mm else (dpi / MILLIMETERS_PER_INCH)
+    return dpi if not is_mm else (dpi / MILLIMETERS_PER_INCH)
+
+
+def _export_fin(comp, filename, settings):
+    """Exports a fin component to SVG."""
+    unit_to_px = _get_unit_to_px(settings)
     margin = 0.5 * unit_to_px
+    is_mm = settings['units'] == 'millimeters'
 
     fin = FinConfiguration(
         root_chord=comp['root_chord'],
@@ -67,10 +72,9 @@ def _export_fin(comp, filename, settings):
 
 def _export_ring(comp, filename, settings, hole_settings):
     """Exports a ring component to SVG."""
-    dpi = settings['dpi']
-    is_mm = settings['units'] == 'millimeters'
-    unit_to_px = dpi if not is_mm else (dpi / MILLIMETERS_PER_INCH)
+    unit_to_px = _get_unit_to_px(settings)
     margin = 0.5 * unit_to_px
+    is_mm = settings['units'] == 'millimeters'
 
     od = comp['od'] * unit_to_px
     _id = comp['id'] * unit_to_px
@@ -99,10 +103,9 @@ def _export_ring(comp, filename, settings, hole_settings):
 
 def _export_bulkhead(comp, filename, settings, hole_settings):
     """Exports a bulkhead component to SVG."""
-    dpi = settings['dpi']
-    is_mm = settings['units'] == 'millimeters'
-    unit_to_px = dpi if not is_mm else (dpi / MILLIMETERS_PER_INCH)
+    unit_to_px = _get_unit_to_px(settings)
     margin = 0.5 * unit_to_px
+    is_mm = settings['units'] == 'millimeters'
 
     od = comp['od'] * unit_to_px
 

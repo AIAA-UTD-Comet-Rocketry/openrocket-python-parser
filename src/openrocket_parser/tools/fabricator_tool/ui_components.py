@@ -44,14 +44,16 @@ class PreviewWidget(Widget):
             elif shape_data['type'] == 'bulkhead':
                 self._draw_bulkhead(shape_data, settings)
 
+    def _get_ui_scale(self, settings):
+        ui_scale = settings['ui_scale']
+        if settings['units'] == 'millimeters':
+            ui_scale /= MILLIMETERS_PER_INCH
+        return ui_scale
+
     def _draw_polygon(self, shape_data, settings):
         """Draws a polygon (like a fin) on the canvas."""
         points = shape_data['points']
-        ui_scale = settings['ui_scale']
-
-        # Adjust scale for mm to keep preview size reasonable
-        if settings['units'] == 'millimeters':
-            ui_scale /= MILLIMETERS_PER_INCH
+        ui_scale = self._get_ui_scale(settings)
 
         min_x = min(p[0] for p in points)
         max_x = max(p[0] for p in points)
@@ -79,11 +81,7 @@ class PreviewWidget(Widget):
         """Draws a ring on the canvas."""
         od = shape_data['od']
         _id = shape_data['id']
-        ui_scale = settings['ui_scale']
-
-        # Adjust scale for mm to keep preview size reasonable
-        if settings['units'] == 'millimeters':
-            ui_scale /= MILLIMETERS_PER_INCH
+        ui_scale = self._get_ui_scale(settings)
 
         center_x = self.center_x
         center_y = self.center_y
@@ -102,11 +100,7 @@ class PreviewWidget(Widget):
     def _draw_bulkhead(self, shape_data, settings):
         """Draws a bulkhead on the canvas."""
         od = shape_data['od']
-        ui_scale = settings['ui_scale']
-
-        # Adjust scale for mm to keep preview size reasonable
-        if settings['units'] == 'millimeters':
-            ui_scale /= MILLIMETERS_PER_INCH
+        ui_scale = self._get_ui_scale(settings)
 
         center_x = self.center_x
         center_y = self.center_y
