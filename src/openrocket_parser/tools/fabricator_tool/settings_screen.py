@@ -58,6 +58,11 @@ class SettingsScreen(Screen):
         content.add_widget(self.units)
         self.conversion_value = METERS_TO_INCHES
 
+        # 7. Tolerance
+        content.add_widget(Label(text='Tolerance (Kerf offset):', size_hint_y=None, height=30))
+        self.tolerance = TextInput(text='0.0', size_hint_y=None, height=40)
+        content.add_widget(self.tolerance)
+
         scroll.add_widget(content)
         root_layout.add_widget(scroll)
 
@@ -77,6 +82,7 @@ class SettingsScreen(Screen):
         self.ui_scale.text = str(app.settings['ui_scale'])
         self.color_picker.color = app.settings['shape_color']
         self.units.text = app.settings['units']
+        self.tolerance.text = str(app.settings.get('tolerance', 0.0))
 
     def on_leave(self, *args):
         """Called when the screen is left."""
@@ -87,6 +93,7 @@ class SettingsScreen(Screen):
         app.settings['ui_scale'] = int(self.ui_scale.text)
         app.settings['shape_color'] = self.color_picker.color
         app.settings['units'] = self.units.text
+        app.settings['tolerance'] = float(self.tolerance.text) if self.tolerance.text else 0.0
         if self.units.text == 'inches':
             app.settings['unit_conversion'] = METERS_TO_INCHES
         elif self.units.text == 'millimeters':

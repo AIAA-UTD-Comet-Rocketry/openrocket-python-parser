@@ -166,6 +166,6 @@ The total time for all the pieces was just under 24 minutes, with conservative c
 
 ## Upcoming Features
 
-*   **Multiple Holes & Symmetry:** Support for adding multiple holes with symmetry options (e.g., for mounting patterns).
-*   **Tolerance Adjustments:** Implement a feature to apply a tolerance value that minimally scales the exported shapes. This can compensate for the kerf of a laser cutter, the diameter of an end mill, or other tooling variations.
+*   [X] **Multiple Holes & Symmetry:** Support for adding multiple holes with symmetry options (e.g., for mounting patterns).
+*   [X] **Tolerance Adjustments:** Implement a feature to apply a tolerance value that minimally scales the exported shapes. This can compensate for the kerf of a laser cutter, the diameter of an end mill, or other tooling variations.
 *   **Configurable Labels:** Add options to configure if and where dimension labels are added to the exported SVG file, giving you more control over the final output.

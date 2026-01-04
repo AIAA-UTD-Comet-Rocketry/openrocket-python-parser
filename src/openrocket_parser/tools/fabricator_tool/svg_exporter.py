@@ -31,6 +31,8 @@ def _export_fin(comp, filename, settings):
     margin = 0.5 * unit_to_px
     is_mm = settings['units'] == 'millimeters'
 
+    # Tolerance handling for fins is complex (polygon offset), skipping for now or simple scaling
+
     fin = FinConfiguration(
         root_chord=comp['root_chord'],
         tip_chord=comp['tip_chord'],
@@ -75,9 +77,11 @@ def _export_ring(comp, filename, settings, hole_settings):
     unit_to_px = _get_unit_to_px(settings)
     margin = 0.5 * unit_to_px
     is_mm = settings['units'] == 'millimeters'
+    tolerance = settings.get('tolerance', 0.0) * unit_to_px
 
-    od = comp['od'] * unit_to_px
-    _id = comp['id'] * unit_to_px
+    # Applying tolerance: OD gets bigger, ID gets smaller, using kerf/2
+    od = (comp['od'] * unit_to_px) + tolerance
+    _id = (comp['id'] * unit_to_px) - tolerance
 
     width_px = od + 2 * margin
     height_px = od + 2 * margin
@@ -94,8 +98,8 @@ def _export_ring(comp, filename, settings, hole_settings):
     dwg.add(dwg.circle(center=center, r=od / 2, fill='none', stroke='black', stroke_width=1))
     dwg.add(dwg.circle(center=center, r=_id / 2, fill='none', stroke='black', stroke_width=1))
 
-    if hole_settings and hole_settings['enabled'] and hole_settings['diameter'] > 0:
-        _draw_svg_hole(dwg, hole_settings, center, unit_to_px)
+    if hole_settings:
+        _draw_svg_holes(dwg, hole_settings, center, unit_to_px, tolerance)
 
     _add_svg_ring_labels(dwg, comp, center, od, unit_suffix)
     dwg.save()
@@ -106,8 +110,9 @@ def _export_bulkhead(comp, filename, settings, hole_settings):
     unit_to_px = _get_unit_to_px(settings)
     margin = 0.5 * unit_to_px
     is_mm = settings['units'] == 'millimeters'
+    tolerance = settings.get('tolerance', 0.0) * unit_to_px
 
-    od = comp['od'] * unit_to_px
+    od = (comp['od'] * unit_to_px) + tolerance
 
     width_px = od + 2 * margin
     height_px = od + 2 * margin
@@ -123,23 +128,62 @@ def _export_bulkhead(comp, filename, settings, hole_settings):
 
     dwg.add(dwg.circle(center=center, r=od / 2, fill='none', stroke='black', stroke_width=1))
 
-    if hole_settings and hole_settings['enabled'] and hole_settings['diameter'] > 0:
-        _draw_svg_hole(dwg, hole_settings, center, unit_to_px)
+    if hole_settings:
+        _draw_svg_holes(dwg, hole_settings, center, unit_to_px, tolerance)
 
     _add_svg_bulkhead_labels(dwg, comp, center, od, unit_suffix)
     dwg.save()
 
 
-def _draw_svg_hole(dwg, hole_settings, center, unit_to_px):
-    hole_dia = hole_settings['diameter'] * unit_to_px
+def _draw_svg_holes(dwg, hole_settings, center, unit_to_px, tolerance):
+    hole_type = hole_settings.get('type', 'None')
+    if hole_type == 'None':
+        return
+
+    # Holes get smaller with tolerance (kerf compensation)
+    hole_dia = (hole_settings['diameter'] * unit_to_px) - tolerance
+    if hole_dia <= 0:
+        return
+
     hole_x = 0
     hole_y = 0
     if not hole_settings['centered']:
         hole_x = hole_settings['x'] * unit_to_px
         hole_y = hole_settings['y'] * unit_to_px
 
-    hole_center = (center[0] + hole_x, center[1] + hole_y)
-    dwg.add(dwg.circle(center=hole_center, r=hole_dia / 2, fill='none', stroke='red', stroke_width=1))
+    if hole_type == 'Single (Eyebolt)':
+        _draw_single_svg_hole(dwg, center[0] + hole_x, center[1] + hole_y, hole_dia)
+        
+        if hole_settings.get('symmetric', False):
+            _draw_single_svg_hole(dwg, center[0] - hole_x, center[1] + hole_y, hole_dia)
+
+    elif hole_type == 'Double (U-Bolt)':
+        separation = hole_settings.get('separation', 0.0) * unit_to_px
+        
+        # Hole 1
+        h1_x = hole_x - (separation / 2)
+        h1_y = hole_y
+        _draw_single_svg_hole(dwg, center[0] + h1_x, center[1] + h1_y, hole_dia)
+        
+        # Hole 2
+        h2_x = hole_x + (separation / 2)
+        h2_y = hole_y
+        _draw_single_svg_hole(dwg, center[0] + h2_x, center[1] + h2_y, hole_dia)
+
+        if hole_settings.get('symmetric', False):
+            # Mirror Hole 1
+            mh1_x = -h1_x
+            mh1_y = h1_y
+            _draw_single_svg_hole(dwg, center[0] + mh1_x, center[1] + mh1_y, hole_dia)
+            
+            # Mirror Hole 2
+            mh2_x = -h2_x
+            mh2_y = h2_y
+            _draw_single_svg_hole(dwg, center[0] + mh2_x, center[1] + mh2_y, hole_dia)
+
+
+def _draw_single_svg_hole(dwg, x, y, diameter):
+    dwg.add(dwg.circle(center=(x, y), r=diameter / 2, fill='none', stroke='red', stroke_width=1))
 
 
 def _add_svg_fin_labels(dwg, fin, offset_points, unit_to_px, offset_x, offset_y, unit_suffix):

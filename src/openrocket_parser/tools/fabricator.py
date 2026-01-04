@@ -21,7 +21,8 @@ class RocketApp(App):
             'ui_scale': 100,
             'shape_color': (1, 1, 0, 1),
             'unit_conversion': METERS_TO_INCHES,
-            'units': 'inches'
+            'units': 'inches',
+            'tolerance': 0.0
         }
 
         sm = ScreenManager()
