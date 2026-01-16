@@ -1,6 +1,6 @@
 import logging
 import argparse
-from kivy.app import App
+from kivymd.app import MDApp
 from kivy.uix.screenmanager import ScreenManager
 
 from openrocket_parser.tools.fabricator_tool.main_screen import MainScreen
@@ -8,7 +8,7 @@ from openrocket_parser.tools.fabricator_tool.settings_screen import SettingsScre
 from openrocket_parser.units import METERS_TO_INCHES
 
 
-class RocketApp(App):
+class FabricatorApp(MDApp):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.settings = None
@@ -22,8 +22,13 @@ class RocketApp(App):
             'shape_color': (1, 1, 0, 1),
             'unit_conversion': METERS_TO_INCHES,
             'units': 'inches',
-            'tolerance': 0.0
+            'tolerance': 0.0,
+            'theme_style': 'Dark',
+            'primary_palette': 'Purple'
         }
+
+        self.theme_cls.theme_style = self.settings['theme_style']
+        self.theme_cls.primary_palette = self.settings['primary_palette']
 
         sm = ScreenManager()
         sm.add_widget(MainScreen(name='main'))
@@ -36,7 +41,7 @@ def main():
     _ = parser.parse_args()
 
     logging.info(f"Opening fabricator...")
-    RocketApp().run()
+    FabricatorApp().run()
 
 
 if __name__ == '__main__':

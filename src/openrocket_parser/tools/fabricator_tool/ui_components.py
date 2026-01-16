@@ -4,12 +4,14 @@ Defines the Kivy UI components for the LaserCutExporter application.
 import logging
 import math
 from kivy.uix.widget import Widget
-from kivy.uix.label import Label
 from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.checkbox import CheckBox
-from kivy.uix.textinput import TextInput
 from kivy.uix.spinner import Spinner
 from kivy.graphics import Color, Line, Rectangle
+
+from kivymd.uix.boxlayout import MDBoxLayout
+from kivymd.uix.label import MDLabel
+from kivymd.uix.textfield import MDTextField
+from kivymd.uix.selectioncontrol import MDCheckbox
 
 from openrocket_parser.units import MILLIMETERS_PER_INCH
 
@@ -228,37 +230,20 @@ class PreviewWidget(Widget):
         #self.add_widget(lbl)
 
 
-class VisibleCheckBox(CheckBox):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        with self.canvas.before:
-            Color(0.3, 0.3, 0.3, 1)  # Slightly lighter grey
-            # Draw a small square centered on the checkbox
-            # CheckBox default size is usually around 30x30 or 40x40 depending on hint
-            # We'll make a 20x20 box in the center
-            self.bg_rect = Rectangle(size=(20, 20))
-        self.bind(pos=self.update_bg, size=self.update_bg)
-
-    def update_bg(self, *args):
-        # Center the background rectangle
-        cx, cy = self.center
-        self.bg_rect.pos = (cx - 10, cy - 10)
-
-
-class ComponentSettingsPanel(BoxLayout):
+class ComponentSettingsPanel(MDBoxLayout):
     def __init__(self, update_callback, **kwargs):
         super().__init__(**kwargs)
         self.orientation = 'vertical'
         self.size_hint_x = 0.3
         self.padding = 10
-        self.spacing = 5
+        self.spacing = 15
         self.update_callback = update_callback
 
-        self.add_widget(Label(text="Hole Configuration", size_hint_y=None, height=40, bold=True))
+        self.add_widget(MDLabel(text="Hole Configuration", size_hint_y=None, height=40, bold=True))
 
         # Hole Type Spinner
-        row_type = BoxLayout(size_hint_y=None, height=40)
-        row_type.add_widget(Label(text="Type"))
+        row_type = MDBoxLayout(size_hint_y=None, height=60)
+        row_type.add_widget(MDLabel(text="Type"))
         self.spin_type = Spinner(
             text='None',
             values=('None', 'Single (Eyebolt)', 'Double (U-Bolt)'),
@@ -269,51 +254,51 @@ class ComponentSettingsPanel(BoxLayout):
         self.add_widget(row_type)
 
         # Diameter
-        self.row_dia = BoxLayout(size_hint_y=None, height=40)
-        self.lbl_diameter = Label(text="Diameter")
+        self.row_dia = MDBoxLayout(size_hint_y=None, height=60)
+        self.lbl_diameter = MDLabel(text="Diameter")
         self.row_dia.add_widget(self.lbl_diameter)
-        self.txt_diameter = TextInput(text="0.0", multiline=False)
+        self.txt_diameter = MDTextField(text="0.0", multiline=False)
         self.txt_diameter.bind(text=self.on_change)
         self.row_dia.add_widget(self.txt_diameter)
         self.add_widget(self.row_dia)
 
         # Separation (for U-Bolt)
-        self.row_sep = BoxLayout(size_hint_y=None, height=40)
-        self.lbl_sep = Label(text="Separation")
+        self.row_sep = MDBoxLayout(size_hint_y=None, height=60)
+        self.lbl_sep = MDLabel(text="Separation")
         self.row_sep.add_widget(self.lbl_sep)
-        self.txt_sep = TextInput(text="0.0", multiline=False)
+        self.txt_sep = MDTextField(text="0.0", multiline=False)
         self.txt_sep.bind(text=self.on_change)
         self.row_sep.add_widget(self.txt_sep)
         self.add_widget(self.row_sep)
 
         # Center Checkbox
-        self.row_center = BoxLayout(size_hint_y=None, height=40)
-        self.row_center.add_widget(Label(text="Center Hole(s)"))
-        self.chk_center = VisibleCheckBox(active=True)
+        self.row_center = MDBoxLayout(size_hint_y=None, height=60)
+        self.row_center.add_widget(MDLabel(text="Center Hole(s)"))
+        self.chk_center = MDCheckbox(active=True, size_hint=(None, None), size=(48, 48))
         self.chk_center.bind(active=self.on_change)
         self.row_center.add_widget(self.chk_center)
         self.add_widget(self.row_center)
 
         # X Position
-        self.row_x = BoxLayout(size_hint_y=None, height=40)
-        self.row_x.add_widget(Label(text="X Offset"))
-        self.txt_x = TextInput(text="0.0", multiline=False, disabled=True)
+        self.row_x = MDBoxLayout(size_hint_y=None, height=60)
+        self.row_x.add_widget(MDLabel(text="X Offset"))
+        self.txt_x = MDTextField(text="0.0", multiline=False, disabled=True)
         self.txt_x.bind(text=self.on_change)
         self.row_x.add_widget(self.txt_x)
         self.add_widget(self.row_x)
 
         # Y Position
-        self.row_y = BoxLayout(size_hint_y=None, height=40)
-        self.row_y.add_widget(Label(text="Y Offset"))
-        self.txt_y = TextInput(text="0.0", multiline=False, disabled=True)
+        self.row_y = MDBoxLayout(size_hint_y=None, height=60)
+        self.row_y.add_widget(MDLabel(text="Y Offset"))
+        self.txt_y = MDTextField(text="0.0", multiline=False, disabled=True)
         self.txt_y.bind(text=self.on_change)
         self.row_y.add_widget(self.txt_y)
         self.add_widget(self.row_y)
 
         # Symmetric Mirror (for Centering Ring)
-        self.row_sym = BoxLayout(size_hint_y=None, height=40)
-        self.row_sym.add_widget(Label(text="Symmetric Mirror"))
-        self.chk_sym = VisibleCheckBox(active=False)
+        self.row_sym = MDBoxLayout(size_hint_y=None, height=60)
+        self.row_sym.add_widget(MDLabel(text="Symmetric Mirror"))
+        self.chk_sym = MDCheckbox(active=False, size_hint=(None, None), size=(48, 48))
         self.chk_sym.bind(active=self.on_change)
         self.row_sym.add_widget(self.chk_sym)
         self.add_widget(self.row_sym)
