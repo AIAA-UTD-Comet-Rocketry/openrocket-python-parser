@@ -236,13 +236,13 @@ class ComponentSettingsPanel(MDBoxLayout):
         self.orientation = 'vertical'
         self.size_hint_x = 0.3
         self.padding = 10
-        self.spacing = 5
+        self.spacing = 15
         self.update_callback = update_callback
 
         self.add_widget(MDLabel(text="Hole Configuration", size_hint_y=None, height=40, bold=True))
 
         # Hole Type Spinner
-        row_type = MDBoxLayout(size_hint_y=None, height=40)
+        row_type = MDBoxLayout(size_hint_y=None, height=60)
         row_type.add_widget(MDLabel(text="Type"))
         self.spin_type = Spinner(
             text='None',
@@ -254,7 +254,7 @@ class ComponentSettingsPanel(MDBoxLayout):
         self.add_widget(row_type)
 
         # Diameter
-        self.row_dia = MDBoxLayout(size_hint_y=None, height=40)
+        self.row_dia = MDBoxLayout(size_hint_y=None, height=60)
         self.lbl_diameter = MDLabel(text="Diameter")
         self.row_dia.add_widget(self.lbl_diameter)
         self.txt_diameter = MDTextField(text="0.0", multiline=False)
@@ -263,7 +263,7 @@ class ComponentSettingsPanel(MDBoxLayout):
         self.add_widget(self.row_dia)
 
         # Separation (for U-Bolt)
-        self.row_sep = MDBoxLayout(size_hint_y=None, height=40)
+        self.row_sep = MDBoxLayout(size_hint_y=None, height=60)
         self.lbl_sep = MDLabel(text="Separation")
         self.row_sep.add_widget(self.lbl_sep)
         self.txt_sep = MDTextField(text="0.0", multiline=False)
@@ -272,15 +272,15 @@ class ComponentSettingsPanel(MDBoxLayout):
         self.add_widget(self.row_sep)
 
         # Center Checkbox
-        self.row_center = MDBoxLayout(size_hint_y=None, height=40)
+        self.row_center = MDBoxLayout(size_hint_y=None, height=60)
         self.row_center.add_widget(MDLabel(text="Center Hole(s)"))
-        self.chk_center = MDCheckbox(active=True)
+        self.chk_center = MDCheckbox(active=True, size_hint=(None, None), size=(48, 48))
         self.chk_center.bind(active=self.on_change)
         self.row_center.add_widget(self.chk_center)
         self.add_widget(self.row_center)
 
         # X Position
-        self.row_x = MDBoxLayout(size_hint_y=None, height=40)
+        self.row_x = MDBoxLayout(size_hint_y=None, height=60)
         self.row_x.add_widget(MDLabel(text="X Offset"))
         self.txt_x = MDTextField(text="0.0", multiline=False, disabled=True)
         self.txt_x.bind(text=self.on_change)
@@ -288,7 +288,7 @@ class ComponentSettingsPanel(MDBoxLayout):
         self.add_widget(self.row_x)
 
         # Y Position
-        self.row_y = MDBoxLayout(size_hint_y=None, height=40)
+        self.row_y = MDBoxLayout(size_hint_y=None, height=60)
         self.row_y.add_widget(MDLabel(text="Y Offset"))
         self.txt_y = MDTextField(text="0.0", multiline=False, disabled=True)
         self.txt_y.bind(text=self.on_change)
@@ -296,9 +296,9 @@ class ComponentSettingsPanel(MDBoxLayout):
         self.add_widget(self.row_y)
 
         # Symmetric Mirror (for Centering Ring)
-        self.row_sym = MDBoxLayout(size_hint_y=None, height=40)
+        self.row_sym = MDBoxLayout(size_hint_y=None, height=60)
         self.row_sym.add_widget(MDLabel(text="Symmetric Mirror"))
-        self.chk_sym = MDCheckbox(active=False)
+        self.chk_sym = MDCheckbox(active=False, size_hint=(None, None), size=(48, 48))
         self.chk_sym.bind(active=self.on_change)
         self.row_sym.add_widget(self.chk_sym)
         self.add_widget(self.row_sym)

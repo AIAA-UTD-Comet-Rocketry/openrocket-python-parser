@@ -14,9 +14,6 @@ class FabricatorApp(MDApp):
         self.settings = None
 
     def build(self):
-        self.theme_cls.primary_palette = "Purple"
-        self.theme_cls.theme_style = "Dark"
-
         self.settings = {
             'export_format': 'svg',
             'export_dir': './exported/',
@@ -25,8 +22,13 @@ class FabricatorApp(MDApp):
             'shape_color': (1, 1, 0, 1),
             'unit_conversion': METERS_TO_INCHES,
             'units': 'inches',
-            'tolerance': 0.0
+            'tolerance': 0.0,
+            'theme_style': 'Dark',
+            'primary_palette': 'Purple'
         }
+
+        self.theme_cls.theme_style = self.settings['theme_style']
+        self.theme_cls.primary_palette = self.settings['primary_palette']
 
         sm = ScreenManager()
         sm.add_widget(MainScreen(name='main'))

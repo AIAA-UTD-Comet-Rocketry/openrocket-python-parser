@@ -33,10 +33,13 @@ class MainScreen(Screen):
         header = MDBoxLayout(size_hint_y=0.1, spacing=10)
         btn_load = MDRaisedButton(text="Load .ork file")
         btn_load.bind(on_press=self.show_load_dialog)
-        btn_settings = MDFlatButton(text="Settings")
+        btn_settings = MDRaisedButton(text="Settings")
         btn_settings.bind(on_press=self.go_to_settings)
+        btn_export = MDRaisedButton(text='Export Selection to SVG')
+        btn_export.bind(on_press=self.export_selection)
         header.add_widget(btn_load)
         header.add_widget(btn_settings)
+        header.add_widget(btn_export)
         layout.add_widget(header)
 
         # Main Content
@@ -56,16 +59,7 @@ class MainScreen(Screen):
         # Right: Settings Panel
         self.settings_panel = ComponentSettingsPanel(self.update_preview)
         content.add_widget(self.settings_panel)
-
         layout.add_widget(content)
-
-        # Footer
-        footer = MDBoxLayout(size_hint_y=0.1, spacing=10)
-        btn_export = MDRaisedButton(text='Export Selection to SVG', md_bg_color=(0.2, 0.8, 0.2, 1))
-        btn_export.bind(on_press=self.export_selection)
-        footer.add_widget(btn_export)
-        layout.add_widget(footer)
-
         self.lbl_status = MDLabel(text='No file loaded', size_hint_y=0.1, halign="center")
         layout.add_widget(self.lbl_status)
 
