@@ -2,12 +2,15 @@ import os
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
-from kivy.uix.button import Button
-from kivy.uix.label import Label
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.filechooser import FileChooserListView
 from kivy.uix.popup import Popup
 from kivy.uix.screenmanager import Screen
+
+from kivymd.uix.button import MDRaisedButton, MDFlatButton
+from kivymd.uix.label import MDLabel
+from kivymd.uix.boxlayout import MDBoxLayout
+from kivymd.uix.list import MDList, OneLineListItem
 
 from openrocket_parser.tools.fabricator_tool.ui_components import PreviewWidget, ComponentSettingsPanel
 from openrocket_parser.tools.fabricator_tool.geometry import GeometryEngine, FinConfiguration
@@ -19,7 +22,7 @@ class MainScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.name = 'main'
-        layout = BoxLayout(orientation='vertical', padding=10, spacing=10)
+        layout = MDBoxLayout(orientation='vertical', padding=10, spacing=10)
 
         # State
         self.components = []
@@ -27,21 +30,20 @@ class MainScreen(Screen):
         self.current_filepath = None
 
         # UI Header
-        header = BoxLayout(size_hint_y=0.1, spacing=10)
-        btn_load = Button(text="Load .ork file", background_color=(0.2, 0.6, 0.8, 1))
+        header = MDBoxLayout(size_hint_y=0.1, spacing=10)
+        btn_load = MDRaisedButton(text="Load .ork file")
         btn_load.bind(on_press=self.show_load_dialog)
-        btn_settings = Button(text="Settings", font_size='24sp')
+        btn_settings = MDFlatButton(text="Settings")
         btn_settings.bind(on_press=self.go_to_settings)
         header.add_widget(btn_load)
         header.add_widget(btn_settings)
         layout.add_widget(header)
 
         # Main Content
-        content = BoxLayout(orientation='horizontal', spacing=10)
+        content = MDBoxLayout(orientation='horizontal', spacing=10)
 
         # Left: Component List
-        self.scroll_list = GridLayout(cols=1, spacing=5, size_hint_y=None)
-        self.scroll_list.bind(minimum_height=self.scroll_list.setter('height'))
+        self.scroll_list = MDList()
         
         scrollview = ScrollView(size_hint_x=0.3) # Occupy 30% of horizontal space
         scrollview.add_widget(self.scroll_list)
@@ -58,13 +60,13 @@ class MainScreen(Screen):
         layout.add_widget(content)
 
         # Footer
-        footer = BoxLayout(size_hint_y=0.1, spacing=10)
-        btn_export = Button(text='Export Selection to SVG', background_color=(0.2, 0.8, 0.2, 1))
+        footer = MDBoxLayout(size_hint_y=0.1, spacing=10)
+        btn_export = MDRaisedButton(text='Export Selection to SVG', md_bg_color=(0.2, 0.8, 0.2, 1))
         btn_export.bind(on_press=self.export_selection)
         footer.add_widget(btn_export)
         layout.add_widget(footer)
 
-        self.lbl_status = Label(text='No file loaded', size_hint_y=0.1)
+        self.lbl_status = MDLabel(text='No file loaded', size_hint_y=0.1, halign="center")
         layout.add_widget(self.lbl_status)
 
         self.add_widget(layout)
@@ -78,8 +80,8 @@ class MainScreen(Screen):
         content.add_widget(filechooser)
 
         buttons = BoxLayout(size_hint_y=None, height=44, spacing=5)
-        btn_load = Button(text='Load')
-        btn_cancel = Button(text='Cancel')
+        btn_load = MDRaisedButton(text='Load')
+        btn_cancel = MDFlatButton(text='Cancel')
         buttons.add_widget(btn_load)
         buttons.add_widget(btn_cancel)
         content.add_widget(buttons)
@@ -104,9 +106,9 @@ class MainScreen(Screen):
         self.components = load_ork_file(filepath)
 
         for i, comp in enumerate(self.components):
-            btn = Button(text=comp['name'], size_hint_y=None, height=40)
-            btn.bind(on_press=lambda x, idx=i: self.select_component(idx))
-            self.scroll_list.add_widget(btn)
+            item = OneLineListItem(text=comp['name'])
+            item.bind(on_release=lambda x, idx=i: self.select_component(idx))
+            self.scroll_list.add_widget(item)
 
     def refresh_data(self):
         if self.current_filepath:

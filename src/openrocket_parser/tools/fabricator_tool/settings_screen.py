@@ -3,11 +3,13 @@ from kivy.uix.screenmanager import Screen
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.scrollview import ScrollView
-from kivy.uix.label import Label
 from kivy.uix.spinner import Spinner
-from kivy.uix.textinput import TextInput
 from kivy.uix.colorpicker import ColorPicker
-from kivy.uix.button import Button
+
+from kivymd.uix.boxlayout import MDBoxLayout
+from kivymd.uix.label import MDLabel
+from kivymd.uix.textfield import MDTextField
+from kivymd.uix.button import MDRaisedButton
 
 from openrocket_parser.units import METERS_TO_INCHES, METERS_TO_MILLIMETERS
 
@@ -18,7 +20,7 @@ class SettingsScreen(Screen):
         self.name = 'settings'
 
         # Main layout for the screen
-        root_layout = BoxLayout(orientation='vertical')
+        root_layout = MDBoxLayout(orientation='vertical', padding=10, spacing=10)
 
         # ScrollView for settings
         scroll = ScrollView(size_hint=(1, 1))
@@ -28,46 +30,42 @@ class SettingsScreen(Screen):
         content.bind(minimum_height=content.setter('height'))
 
         # 1. Export Format
-        content.add_widget(Label(text='Export Format:', size_hint_y=None, height=30))
+        content.add_widget(MDLabel(text='Export Format:', size_hint_y=None, height=30))
         self.export_format = Spinner(text='svg', values=('svg',), size_hint_y=None, height=40)
         content.add_widget(self.export_format)
 
         # 2. Export Directory
-        content.add_widget(Label(text='Export Directory:', size_hint_y=None, height=30))
-        self.export_dir = TextInput(text='.', size_hint_y=None, height=40)
+        self.export_dir = MDTextField(text='.', hint_text="Export Directory", size_hint_y=None, height=40)
         content.add_widget(self.export_dir)
 
         # 3. DPI Scaling
-        content.add_widget(Label(text='DPI Scaling (Warning: expert setting):', size_hint_y=None, height=30))
-        self.dpi_scale = TextInput(text='96.0', size_hint_y=None, height=40)
+        self.dpi_scale = MDTextField(text='96.0', hint_text="DPI Scaling (Warning: expert setting)", size_hint_y=None, height=40)
         content.add_widget(self.dpi_scale)
 
         # 4. UI Scale
-        content.add_widget(Label(text='UI Scale:', size_hint_y=None, height=30))
-        self.ui_scale = TextInput(text='50', size_hint_y=None, height=40)
+        self.ui_scale = MDTextField(text='50', hint_text="UI Scale", size_hint_y=None, height=40)
         content.add_widget(self.ui_scale)
 
         # 5. Shape Color
-        content.add_widget(Label(text='Shape Color:', size_hint_y=None, height=30))
+        content.add_widget(MDLabel(text='Shape Color:', size_hint_y=None, height=30))
         self.color_picker = ColorPicker(color=(1, 1, 0, 1), size_hint_y=None, height=500)
         content.add_widget(self.color_picker)
 
         # 6. Conversion from meters to
-        content.add_widget(Label(text='Units (from meters to):', size_hint_y=None, height=30))
+        content.add_widget(MDLabel(text='Units (from meters to):', size_hint_y=None, height=30))
         self.units = Spinner(text='inches', values=('inches', 'millimeters'), size_hint_y=None, height=40)
         content.add_widget(self.units)
         self.conversion_value = METERS_TO_INCHES
 
         # 7. Tolerance
-        content.add_widget(Label(text='Tolerance (Kerf offset):', size_hint_y=None, height=30))
-        self.tolerance = TextInput(text='0.0', size_hint_y=None, height=40)
+        self.tolerance = MDTextField(text='0.0', hint_text="Tolerance (Kerf offset)", size_hint_y=None, height=40)
         content.add_widget(self.tolerance)
 
         scroll.add_widget(content)
         root_layout.add_widget(scroll)
 
         # Back Button
-        btn_back = Button(text="Back", size_hint_y=None, height=50)
+        btn_back = MDRaisedButton(text="Back", size_hint_y=None, height=50)
         btn_back.bind(on_press=self.go_to_main)
         root_layout.add_widget(btn_back)
 
